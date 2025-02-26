@@ -1,4 +1,3 @@
-/* Chatbot Container */
 .chatbotContainer {
   position: fixed;
   bottom: 20px;
@@ -11,9 +10,7 @@
   width: 55px;
   height: 55px;
   background: #647bff;
-  /* Direct color */
   color: #fff;
-  /* White text */
   font-size: 26px;
   text-align: center;
   line-height: 55px;
@@ -24,7 +21,6 @@
   animation: pulse 2s infinite ease-in-out;
 }
 
-/* Glow Animation */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 10px #4a6eff;
@@ -39,7 +35,6 @@
   }
 }
 
-/* Chat Window */
 .chatWrapper {
   position: fixed;
   bottom: 80px;
@@ -47,7 +42,6 @@
   width: 350px;
   max-width: 90%;
   background: rgba(23, 27, 60, 0.75);
-  /* Semi-transparent */
   backdrop-filter: blur(10px);
   color: #fff;
   border-radius: 20px;

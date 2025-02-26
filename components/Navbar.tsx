@@ -1,33 +1,33 @@
 import React, { useState } from "react";
-import styles from "./Navbar.module.css"; // ✅ Import Navbar styles
 import Link from "next/link";
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className={styles.navbarContainer}>
-      <div className={styles.logo}>
-        <Link href="/">AIMS</Link>
-      </div>
+    <header>
+      <div className="nav container">
+        {/* Logo */}
+        <Link href="#" className="logo">AIMS</Link>
 
-      <ul className={`${styles.navbar} ${menuOpen ? styles.navbarOpen : ""}`}>
-        <li><Link href="#home" className={styles.navLink}>Home</Link></li>
-        <li><Link href="#about" className={styles.navLink}>About</Link></li>
-        <li><Link href="#location" className={styles.navLink}>Location</Link></li>
-        <li><Link href="#class" className={styles.navLink}>Class</Link></li>
-        <li><Link href="#contact" className={styles.navLink}>Contact</Link></li>
-      </ul>
+        {/* Navigation Bar */}
+        <ul className={`navbar ${menuOpen ? "open-menu" : ""}`}>
+          <li><Link href="#home" className="nav-link">Home</Link></li>
+          <li><Link href="#about" className="nav-link">About</Link></li>
+          <li><Link href="#location" className="nav-link">Location</Link></li>
+          <li><Link href="#class" className="nav-link">Class</Link></li>
+          <li><Link href="#contact" className="nav-link">Contact</Link></li>
+        </ul>
 
-      {/* Mobile Menu Icon */}
-      <div className={styles.menuIcon} onClick={() => setMenuOpen(!menuOpen)}>
-        <div></div>
-        <div></div>
-        <div></div>
+        {/* Menu Icon */}
+        <div className={`menu-icon ${menuOpen ? "move" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
+          <div className="line1"></div>
+          <div className="line2"></div>
+          <div className="line3"></div>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
 export default Navbar;
-
