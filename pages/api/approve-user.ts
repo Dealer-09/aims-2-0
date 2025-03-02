@@ -1,7 +1,6 @@
-<<<<<<< Updated upstream
 import { sendEmail } from "@/utils/sendEmail";
 import { db } from "@/utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { NextApiRequest, NextApiResponse } from "next";
 
 interface RequestBody {
@@ -27,20 +26,13 @@ export default async function handler(
   }
 
   try {
-    const docRef = await addDoc(collection(db, "students"), { 
+    // Store user approval status in Firestore
+    await setDoc(doc(db, "access_requests", email), { 
       email, 
-      access: [] as string[] 
+      status: "approved" // ✅ Now explicitly storing approval status
     });
-=======
-import { sendEmail } from '@utils/sendEmail.ts';
 
-export default async function handler(req, res) {
-  const { email } = req.body;
-
-  try {
-    await addDoc(collection(db, "students"), { email, access: [] });
->>>>>>> Stashed changes
-
+    // Send email notification to student
     await sendEmail(
       email,
       "✅ Your Request Has Been Approved!",
@@ -49,13 +41,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ message: "User approved!" });
   } catch (error) {
-<<<<<<< Updated upstream
     console.error("Error approving user:", error);
     res.status(500).json({ message: "Error approving user." });
   }
 }
-=======
-    res.status(500).json({ message: "Error approving user." });
-  }
-}
->>>>>>> Stashed changes
