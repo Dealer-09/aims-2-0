@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { sendEmail } from "@/utils/sendEmail";
 import { db } from "@/utils/firebase";
 import { collection, addDoc } from "firebase/firestore";
@@ -30,6 +31,15 @@ export default async function handler(
       email, 
       access: [] as string[] 
     });
+=======
+import { sendEmail } from '@utils/sendEmail.ts';
+
+export default async function handler(req, res) {
+  const { email } = req.body;
+
+  try {
+    await addDoc(collection(db, "students"), { email, access: [] });
+>>>>>>> Stashed changes
 
     await sendEmail(
       email,
@@ -39,7 +49,13 @@ export default async function handler(
 
     res.status(200).json({ message: "User approved!" });
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error approving user:", error);
     res.status(500).json({ message: "Error approving user." });
   }
 }
+=======
+    res.status(500).json({ message: "Error approving user." });
+  }
+}
+>>>>>>> Stashed changes
