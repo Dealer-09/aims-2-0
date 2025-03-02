@@ -61,9 +61,9 @@ const ReviewsSection: React.FC = () => {
             <i className="bx bxs-quote-right"></i>
             <p className="review-text">"You write and speak in a clear and concise manner."</p>
             <div className="review-profile">
-              <h2>Srishti</h2>
-              <span>From Hindmotor</span>
-              <img src="/img/srishti.jpeg" alt="Srishti" onContextMenu={(e) => e.preventDefault()} />
+              <h2>Kshitij</h2>
+              <span>From Uttarpara</span>
+              <img src="/img/kshitij.jpeg" alt="Kshitij" onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -74,9 +74,9 @@ const ReviewsSection: React.FC = () => {
             <i className="bx bxs-quote-right"></i>
             <p className="review-text">"The way you hold all students to a high standard is impressive."</p>
             <div className="review-profile">
-              <h2>Anmol</h2>
-              <span>From Bally</span>
-              <img src="/img/anmol.jpeg" alt="Anmol" onContextMenu={(e) => e.preventDefault()} />
+              <h2>Mohit</h2>
+              <span>From Rishra</span>
+              <img src="/img/mohit.jpeg" alt="Mohit" onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
