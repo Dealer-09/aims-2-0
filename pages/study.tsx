@@ -1,44 +1,43 @@
-import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useUser } from "@clerk/nextjs";
 
-type Material = {
-  id: string;
-  title: string;
-  link: string;
-};
-
-export default function StudyMaterials() {
-  const { user, isLoaded } = useUser();
-  const [materials, setMaterials] = useState<Material[]>([]); // ✅ Correct typing
+export default function StudyPage() {
+  const { isSignedIn, user, isLoaded } = useUser();
+  const router = useRouter();
+  const [approved, setApproved] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchMaterials() {
-      if (user?.emailAddresses[0].emailAddress) {
-        const res = await fetch(`/api/getMaterials?email=${user.emailAddresses[0].emailAddress}`);
-        const data = await res.json();
-        setMaterials(data.materials || []);
+    if (isLoaded) {
+      if (!isSignedIn) {
+        router.push("/"); // 🚀 Redirect if not signed in
+      } else {
+        checkApproval(user?.primaryEmailAddress?.emailAddress);
       }
     }
-    fetchMaterials();
-  }, [user]);
+  }, [isLoaded, isSignedIn, user]);
 
-  if (!isLoaded) return <p>Loading...</p>;
-  if (!user) return <p>Please log in to access study materials.</p>;
+  const checkApproval = async (email: string | undefined) => {
+    if (!email) return;
+    try {
+      const res = await fetch(`/api/check-approval?email=${email}`);
+      const data = await res.json();
+      setApproved(data.approved);
+    } catch (error) {
+      console.error("Error checking approval:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (!approved) return <p>Access Denied. You are not approved.</p>;
 
   return (
-    <section>
-      <h2>Your Study Materials</h2>
-      <ul>
-        {materials.length > 0 ? (
-          materials.map((material) => (
-            <li key={material.id}>
-              <a href={material.link} target="_blank" rel="noopener noreferrer">{material.title}</a>
-            </li>
-          ))
-        ) : (
-          <p>No study materials assigned yet.</p>
-        )}
-      </ul>
-    </section>
+    <div>
+      <h2>Study Materials</h2>
+      <p>Welcome, you have access to your study materials.</p>
+    </div>
   );
 }

@@ -1,11 +1,15 @@
 import { clerkMiddleware, getAuth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { db } from "@/utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default clerkMiddleware(async (auth, req) => {
+// Apply Clerk authentication middleware
+export default clerkMiddleware();
+
+// Custom middleware to check user roles in Firestore
+export async function middleware(req: NextRequest) {
   const { userId } = getAuth(req);
-  const url = req.nextUrl.pathname;
+  const url = req.nextUrl.pathname; // ✅ Correct way to get pathname
 
   if (!userId) {
     return NextResponse.redirect(new URL("/sign-in", req.url)); // 🚀 Redirect unauthorized users
@@ -14,7 +18,12 @@ export default clerkMiddleware(async (auth, req) => {
   // 🔹 Fetch user role from Firestore
   const userRef = doc(db, "users", userId);
   const userSnap = await getDoc(userRef);
-  const userData = userSnap.exists() ? userSnap.data() : null;
+
+  if (!userSnap.exists()) {
+    return NextResponse.redirect(new URL("/sign-in", req.url)); // 🚀 Redirect if user not found
+  }
+
+  const userData = userSnap.data();
 
   // 🔹 Secure /admin route: Only allow admins
   if (url.startsWith("/admin") && userData?.role !== "admin") {
@@ -22,8 +31,9 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   return NextResponse.next();
-});
+}
 
+// 🔹 Apply middleware only to these routes
 export const config = {
-  matcher: ["/admin/:path*", "/study/:path*"], // ✅ Secure admin & student pages
+  matcher: ["/admin/:path*", "/study/:path*", "/api/protected/:path*"], // ✅ Secure API routes too
 };

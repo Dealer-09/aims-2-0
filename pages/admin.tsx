@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "@/utils/firebase";
-import { collection, getDocs, doc, updateDoc, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 
 type Request = {
   id: string;
@@ -10,13 +10,11 @@ type Request = {
 
 export default function AdminDashboard() {
   const [requests, setRequests] = useState<Request[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchRequests() {
       try {
-        const querySnapshot = await getDocs(collection(db, "access_requests")); // ✅ Fixed collection name
+        const querySnapshot = await getDocs(collection(db, "access_requests"));
         const requestsData = querySnapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
           id: doc.id,
           email: doc.data().email || "Unknown",
@@ -25,52 +23,42 @@ export default function AdminDashboard() {
         setRequests(requestsData);
       } catch (error) {
         console.error("Firestore Error:", error);
-        setError("Failed to load requests.");
-      } finally {
-        setLoading(false);
       }
     }
     fetchRequests();
   }, []);
 
-  const updateStatus = async (id: string, status: string) => {
+  const handleApproval = async (id: string, email: string, status: string) => {
     try {
-      await updateDoc(doc(db, "access_requests", id), { status });
-      setRequests((prevRequests) =>
-        prevRequests.map((req) => (req.id === id ? { ...req, status } : req))
-      );
+      if (status === "approved") {
+        await updateDoc(doc(db, "access_requests", id), { status });
+        await updateDoc(doc(db, "users", email), { role: "student" }); // Assign role
+      } else {
+        await deleteDoc(doc(db, "access_requests", id)); // Remove request if rejected
+      }
+      setRequests(requests.filter((req) => req.id !== id));
     } catch (error) {
-      console.error("Error updating status:", error);
+      console.error("Error updating request:", error);
     }
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
-
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
+    <div>
+      <h2>Admin Dashboard</h2>
       {requests.length > 0 ? (
         requests.map((req) => (
-          <div key={req.id} className="border p-3 mb-2 rounded">
-            <p>Email: <strong>{req.email}</strong></p>
-            <p>Status: <span className={`font-semibold ${req.status === "pending" ? "text-yellow-500" : req.status === "approved" ? "text-green-500" : "text-red-500"}`}>{req.status}</span></p>
-
+          <div key={req.id}>
+            <p>Email: {req.email} | Status: {req.status}</p>
             {req.status === "pending" && (
-              <div className="mt-2">
-                <button onClick={() => updateStatus(req.id, "approved")} className="bg-green-500 text-white px-2 py-1 rounded mr-2">
-                  Approve
-                </button>
-                <button onClick={() => updateStatus(req.id, "rejected")} className="bg-red-500 text-white px-2 py-1 rounded">
-                  Reject
-                </button>
-              </div>
+              <>
+                <button onClick={() => handleApproval(req.id, req.email, "approved")}>Approve</button>
+                <button onClick={() => handleApproval(req.id, req.email, "rejected")}>Reject</button>
+              </>
             )}
           </div>
         ))
       ) : (
-        !loading && <p>No pending requests.</p>
+        <p>No pending requests.</p>
       )}
     </div>
   );

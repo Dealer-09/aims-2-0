@@ -13,12 +13,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    console.log("Checking Firestore for email:", email); // ✅ Debugging
+
     const userRef = doc(db, "users", email);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
+      console.log("User Found:", userSnap.data()); // ✅ Debug Firestore Data
       return res.status(200).json({ approved: true });
     } else {
+      console.log("User Not Approved:", email); // ✅ Debug Non-Approved Case
       return res.status(200).json({ approved: false });
     }
   } catch (error) {
