@@ -408,11 +408,13 @@ header {
   width: 100px;
   margin: 0 auto;
   align-items: center;
-  padding: 12px 16px;
+  padding: 3px 3px;
+  flex-direction: column-reverse;
   color: var(--bg-color);
-  background: var(--main-color);
+  background:  linear-gradient(135deg, #4A00E0, #8E2DE2);;
   border-radius: 0.9rem;
   margin-top: 2rem;
+  cursor: pointer;
   column-gap: 0.5rem;
 }
 
