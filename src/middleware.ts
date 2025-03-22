@@ -5,13 +5,15 @@ import { doc, getDoc } from "firebase/firestore";
 
 export default clerkMiddleware();
 
-// Custom middleware to check user roles in Firestore
 export async function middleware(req: NextRequest) {
-  const { userId } = getAuth(req); // ✅ Works in Clerk 6.12.2
-  const url = req.nextUrl.pathname;
+  console.log("🔥 Middleware is running on:", req.nextUrl.pathname); // ✅ Log route
+
+  const { userId } = getAuth(req);
+  console.log("🔹 User ID from Clerk:", userId); // ✅ Log user ID
 
   if (!userId) {
-    return NextResponse.redirect(new URL("/sign-in", req.url)); // 🚀 Redirect unauthorized users
+    console.log("❌ No userId, redirecting to /sign-in");
+    return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 
   try {
@@ -20,17 +22,25 @@ export async function middleware(req: NextRequest) {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      return NextResponse.redirect(new URL("/sign-in", req.url)); // 🚀 Redirect if user not found
+      console.log("❌ User not found in Firestore");
+      return NextResponse.redirect(new URL("/sign-in", req.url));
     }
 
     const userData = userSnap.data();
+    console.log("🔥 Firestore Role Detected:", userData?.role); // ✅ Log role
 
-    // 🔹 Secure /admin route: Only allow admins
-    if (url.startsWith("/admin") && userData?.role !== "admin") {
-      return NextResponse.redirect(new URL("/study", req.url)); // 🚀 Redirect non-admins
+    // 🔹 Allow access to admin if role is admin
+    if (req.nextUrl.pathname.startsWith("/admin")) {
+      if (userData?.role === "admin") {
+        console.log("✅ Admin detected, allowing access.");
+        return NextResponse.next();
+      } else {
+        console.log("❌ User is NOT admin, redirecting to /study");
+        return NextResponse.redirect(new URL("/study", req.url));
+      }
     }
 
-    return NextResponse.next();
+    return NextResponse.next(); // ✅ Allow access for other routes
   } catch (error) {
     console.error("❌ Firestore Error:", error);
     return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -39,5 +49,6 @@ export async function middleware(req: NextRequest) {
 
 // 🔹 Apply middleware only to these routes
 export const config = {
-  matcher: ["/admin/:path*", "/study/:path*", "/api/protected/:path*"], // ✅ Secure API routes too
+  matcher: ["/admin/:path*", "/study/:path*", "/api/protected/:path*"],
+  publicRoutes: ["/signup", "/sign-in"],
 };
