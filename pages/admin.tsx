@@ -1,6 +1,8 @@
+import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { db } from "@/utils/firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc, QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -12,15 +14,41 @@ type Request = {
 };
 
 export default function AdminDashboard() {
+  const { isSignedIn, user } = useUser();
+  const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [requests, setRequests] = useState<Request[]>([]);
   const [selectedClass, setSelectedClass] = useState<{ [key: string]: string }>({});
   const [selectedSubject, setSelectedSubject] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
+    if (!isSignedIn) {
+      router.push("/sign-in");
+      return;
+    }
+
+    async function checkAdminRole() {
+      const email = user?.primaryEmailAddress?.emailAddress; // ✅ Extract email correctly
+      if (!email) return;
+
+      const userRef = doc(db, "users", email); // ✅ Firestore gets a valid email string
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists() && userSnap.data()?.role === "admin") {
+        setIsAdmin(true);
+      } else {
+        router.push("/study"); // 🚀 Redirect non-admins
+      }
+    }
+
+    checkAdminRole();
+  }, [isSignedIn, user, router]);
+
+  useEffect(() => {
     async function fetchRequests() {
       try {
         const querySnapshot = await getDocs(collection(db, "access_requests"));
-        const requestsData = querySnapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
+        const requestsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           email: doc.data().email || "Unknown",
           status: doc.data().status || "pending",
@@ -95,6 +123,8 @@ export default function AdminDashboard() {
       console.error("Error updating request:", error);
     }
   };
+
+  if (!isAdmin) return <p>Loading...</p>;
 
   return (
     <div>
