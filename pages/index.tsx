@@ -1,6 +1,3 @@
-// Step 2: Convert Static HTML to Next.js Components
-// - Migrating Navbar, Hero Section, About Section, Locations Section, Classes Section, Reviews Section, Contact Section, Chatbot Section, and Footer Section to Next.js
-
 import React from 'react';
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
@@ -10,8 +7,9 @@ import LocationsSection from '../components/LocationsSection';
 import ClassesSection from '../components/ClassesSection';
 import ReviewsSection from '../components/ReviewsSection';
 import ContactSection from '../components/ContactSection';
-import ChatbotSection from "../components/ChatbotSection";
+import ChatbotSection from '../components/ChatbotSection';
 import FooterSection from '../components/FooterSection';
+import acad from '../public/img/academic.png';
 
 const Home: React.FC = () => {
   return (
@@ -19,6 +17,7 @@ const Home: React.FC = () => {
       <Head>
         <title>AIMS</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href={acad.src} type="image/x-icon" />
       </Head>
       <Navbar />
       <HeroSection />
@@ -32,4 +31,5 @@ const Home: React.FC = () => {
     </>
   );
 };
+
 export default Home;
