@@ -28,16 +28,31 @@ export default function AdminDashboard() {
     }
 
     async function checkAdminRole() {
-      const email = user?.primaryEmailAddress?.emailAddress; // ✅ Extract email correctly
-      if (!email) return;
+      const sessionToken = await user?.getToken(); // ✅ Fetch session token manually
+      if (!sessionToken) {
+        console.error("❌ No session token available.");
+        router.push("/sign-in");
+        return;
+      }
 
-      const userRef = doc(db, "users", email); // ✅ Firestore gets a valid email string
-      const userSnap = await getDoc(userRef);
+      try {
+        const res = await fetch("/api/get-user-role", {
+          method: "GET",
+          headers: {
+            Authorization: Bearer ${sessionToken}, // ✅ Send session token
+          },
+        });
 
-      if (userSnap.exists() && userSnap.data()?.role === "admin") {
-        setIsAdmin(true);
-      } else {
-        router.push("/study"); // 🚀 Redirect non-admins
+        const data = await res.json();
+
+        if (data.role === "admin") {
+          setIsAdmin(true);
+        } else {
+          router.push("/study"); // 🚀 Redirect non-admins
+        }
+      } catch (error) {
+        console.error("❌ Error fetching role:", error);
+        router.push("/sign-in"); // 🚀 Redirect if error
       }
     }
 
@@ -69,10 +84,10 @@ export default function AdminDashboard() {
 
     try {
       if (status === "approved") {
-        await updateDoc(doc(db, "users", email), { 
+        await updateDoc(doc(db, "users", email), {
           role: "student",
-          class: selectedClass[id], 
-          subject: selectedSubject[id], 
+          class: selectedClass[id],
+          subject: selectedSubject[id],
         });
 
         await updateDoc(doc(db, "access_requests", id), { status });
@@ -93,9 +108,8 @@ export default function AdminDashboard() {
           from: "no-reply@yourdomain.com",
           to: email,
           subject: "Access Approved",
-          html: approvalEmailBody, 
+          html: approvalEmailBody,
         });
-
       } else {
         await deleteDoc(doc(db, "access_requests", id));
 
@@ -114,7 +128,7 @@ export default function AdminDashboard() {
           from: "no-reply@yourdomain.com",
           to: email,
           subject: "Access Denied",
-          html: rejectionEmailBody, 
+          html: rejectionEmailBody,
         });
       }
 
@@ -162,6 +176,6 @@ export default function AdminDashboard() {
       ) : (
         <p>No pending requests.</p>
       )}
-    </div>
-  );
+    </div>
+  );
 }
