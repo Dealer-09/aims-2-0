@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/utils/firebase";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { sendEmail } from "@/utils/sendEmail";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -27,6 +28,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       status: "pending",
       requestedAt: new Date().toISOString()
     });
+
+    // Send email to admin
+    const adminEmail = "admin@yourwebsite.com"; // TODO: Set your real admin email
+    await sendEmail(
+      adminEmail,
+      "New Access Request",
+      `${email} is asking for access to AIMS.`
+    );
 
     return res.status(200).json({ message: "Request sent. Waiting for admin approval!" });
   } catch (error) {

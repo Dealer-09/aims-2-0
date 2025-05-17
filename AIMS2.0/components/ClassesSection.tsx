@@ -9,7 +9,7 @@ const ClassesSection: React.FC = () => {
   };
 
   const handleSignUp = () => {
-    router.push("/signup");
+    router.push("/request-access");
   };
   return (
     <section className="class container" id="class">

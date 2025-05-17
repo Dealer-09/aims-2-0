@@ -12,7 +12,12 @@ export default function SignUpPage() {
       if (!email) return;
 
       // ✅ Fetch user role before assigning or redirecting
-      fetch("/api/get-user-role")
+      fetch("/api/get-user-role", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.id}`,
+        },
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data.role === "admin") {

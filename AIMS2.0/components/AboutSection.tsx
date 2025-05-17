@@ -15,15 +15,15 @@ const AboutSection: React.FC = () => {
         <div className="about-text">
           <p>Way to learn</p>
           <p>
-            "Welcome to "AMIT INSTITUTE OF MATHS & SCIENCE", where science and mathematics come to life!
+            &quot;Welcome to &quot;AMIT INSTITUTE OF MATHS &amp; SCIENCE&quot;, where science and mathematics come to life!
             Our center offers a dynamic learning environment for students of all ages to explore the wonders of science and mathematics.
             From captivating experiments to challenging problem-solving activities, our experienced instructors provide hands-on guidance
             to ignite curiosity and cultivate a deeper understanding of these fundamental subjects.
           </p>
           <p>
             Step into the realm of scientific exploration with me! As an experienced science and mathematics teacher,
-            I've dedicated my career to igniting curiosity and fostering a deep understanding of the natural world.
-            On this website, you'll find a treasure trove of educational resources, interactive lessons, and captivating experiments
+            I&apos;ve dedicated my career to igniting curiosity and fostering a deep understanding of the natural world.
+            On this website, you&apos;ll find a treasure trove of educational resources, interactive lessons, and captivating experiments
             designed to inspire and empower both students and educators alike.
           </p>
         </div>

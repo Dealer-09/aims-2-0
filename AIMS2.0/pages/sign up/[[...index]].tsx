@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { SignUp } from "@clerk/nextjs";
 
 export default function CustomSignUp() {
@@ -7,7 +7,6 @@ export default function CustomSignUp() {
   const [approved, setApproved] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false); // ✅ Added loading state
-  const router = useRouter();
 
   const checkApproval = async () => {
     setError(""); // ✅ Reset error before new request

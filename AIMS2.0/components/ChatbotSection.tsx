@@ -21,7 +21,13 @@ const ChatbotSection: React.FC = () => {
 
     setTimeout(() => {
       const response = responses[input.toLowerCase()];
-      setMessages([...messages, { text: input, isUser: true }, { text: response || "I don't understand that.", isUser: false }]);
+      let responseText: string;
+      if (typeof response === "function") {
+        responseText = "I don't understand that.";
+      } else {
+        responseText = response || "I don't understand that.";
+      }
+      setMessages([...messages, { text: input, isUser: true }, { text: responseText, isUser: false }]);
     }, 1000);
 
     setInput("");

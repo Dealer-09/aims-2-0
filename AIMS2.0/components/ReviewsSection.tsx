@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react"; // ✅ Import Swiper components
 import "swiper/css"; // ✅ Import Swiper styles
 import "swiper/css/pagination"; // ✅ Import pagination styles
@@ -24,7 +25,7 @@ const ReviewsSection: React.FC = () => {
             <div className="review-profile">
               <h2>Vikash</h2>
               <span>From Hindmotor</span>
-              <img src="/img/vikash.jpg" alt="Vikash" onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/vikash.jpg" alt="Vikash" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -37,7 +38,7 @@ const ReviewsSection: React.FC = () => {
             <div className="review-profile">
               <h2>Divya</h2>
               <span>From Hindmotor</span>
-              <img src="/img/divya.jpeg" alt="Divya" onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/divya.jpeg" alt="Divya" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -46,11 +47,11 @@ const ReviewsSection: React.FC = () => {
         <SwiperSlide>
           <div className="review-box">
             <i className="bx bxs-quote-right"></i>
-            <p className="review-text">You believed in me when I didn't.</p>
+            <p className="review-text">You believed in me when I didn&apos;t.</p>
             <div className="review-profile">
               <h2>Tanush</h2>
               <span>From Hindmotor</span>
-              <img src="/img/tanush.jpg" alt="Tanush" onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/tanush.jpg" alt="Tanush" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -59,11 +60,11 @@ const ReviewsSection: React.FC = () => {
         <SwiperSlide>
           <div className="review-box">
             <i className="bx bxs-quote-right"></i>
-            <p className="review-text">"You write and speak in a clear and concise manner."</p>
+            <p className="review-text">&quot;You write and speak in a clear and concise manner.&quot;</p>
             <div className="review-profile">
               <h2>Kshitij</h2>
               <span>From Uttarpara</span>
-              <img src="/img/kshitij.jpeg" alt="Kshitij" onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/kshitij.jpeg" alt="Kshitij" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -72,11 +73,11 @@ const ReviewsSection: React.FC = () => {
         <SwiperSlide>
           <div className="review-box">
             <i className="bx bxs-quote-right"></i>
-            <p className="review-text">"The way you hold all students to a high standard is impressive."</p>
+            <p className="review-text">&quot;The way you hold all students to a high standard is impressive.&quot;</p>
             <div className="review-profile">
               <h2>Mohit</h2>
               <span>From Rishra</span>
-              <img src="/img/mohit.jpeg" alt="Mohit" onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/mohit.jpeg" alt="Mohit" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
