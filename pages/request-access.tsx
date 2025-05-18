@@ -40,26 +40,6 @@ const RequestAccess: React.FC = () => {
       setStatus({ type: "error", text: "Something went wrong. Please try again." });
     }
   };
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
-      const script = document.createElement("script");
-      script.src = "https://js.hcaptcha.com/1/api.js";
-      script.async = true;
-      script.defer = true;
-      script.id = "hcaptcha-script";
-      document.body.appendChild(script);
-      // Add callback handler
-      const localScript = document.createElement("script");
-      localScript.src = "/hcaptcha.js";
-      localScript.async = true;
-      localScript.defer = true;
-      localScript.id = "hcaptcha-callback";
-      document.body.appendChild(localScript);
-    }
-  }, []);
-
-
   useEffect(() => {
     if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
       const script = document.createElement("script");
