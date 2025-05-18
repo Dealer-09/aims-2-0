@@ -87,17 +87,34 @@ export default function AdminDashboard() {
       setUploadError("Please select a PDF, class, and subject.");
       return;
     }
+    // Server-side file type and size validation
+    if (pdfFile.type !== "application/pdf") {
+      setUploadError("Only PDF files are allowed.");
+      return;
+    }
+    if (pdfFile.size > 10 * 1024 * 1024) { // 10MB limit
+      setUploadError("PDF file size must be less than 10MB.");
+      return;
+    }
+    // Sanitize class and subject
+    const allowedClasses = ["Class 10", "Class 12"];
+    const allowedSubjects = ["Math", "Physics"];
+    if (!allowedClasses.includes(pdfClass) || !allowedSubjects.includes(pdfSubject)) {
+      setUploadError("Invalid class or subject.");
+      return;
+    }
     setUploading(true);
     try {
       if (!storage) throw new Error("Firebase Storage not initialized");
-      // Upload PDF to Firebase Storage
-      const storageRef = ref(storage, `pdfs/${Date.now()}_${pdfFile.name}`);
+      // Use a UUID for the filename to avoid info leakage
+      const uuid = window.crypto?.randomUUID ? window.crypto.randomUUID() : `${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+      const storageRef = ref(storage, `pdfs/${uuid}.pdf`);
       await uploadBytes(storageRef, pdfFile);
       const url = await getDownloadURL(storageRef);
       // Save metadata to Firestore
       await addDoc(collection(db, "pdfs"), {
         url,
-        filename: pdfFile.name,
+        filename: pdfFile.name.replace(/[^a-zA-Z0-9.\-_]/g, "_"), // sanitized original name for display only
         class: pdfClass,
         subject: pdfSubject,
         uploadedAt: new Date().toISOString(),

@@ -11,8 +11,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { id, email, status } = req.body;
-  if (!id || !email || !status) {
-    return res.status(400).json({ error: "Missing required fields" });
+  // Validate input
+  if (!id || !email || !status || typeof id !== "string" || typeof email !== "string" || typeof status !== "string" || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return res.status(400).json({ error: "Missing or invalid required fields" });
   }
 
   try {
