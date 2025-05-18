@@ -1,19 +1,18 @@
-import React from 'react';
-
 const HeroSection: React.FC = () => {
   return (
     <section className="home container" id="home">
       <div className="home-content">
         <div className="home-img">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/img/IMG-20250226-WA0038.jpg" alt="AIMS" />
         </div>
         <div className="home-text">
           <h3>HELLO</h3>
           <h2>
-            I'm <span className="color">Amit Tiwari</span>
+            I&apos;m <span className="color">Amit Tiwari</span>
           </h2>
           <p>
-            <span className="color">"Welcome to my science institute!"</span> As a passionate educator in the realms of science and mathematics,
+            <span className="color">&quot;Welcome to my science institute!&quot;</span> As a passionate educator in the realms of science and mathematics,
             <span className="color"> I am thrilled to extend my knowledge and expertise to eager minds like yours.</span>
             <br /> Through my website, I aim to provide engaging resources, insightful content,
             <span className="color"> and a glimpse into the exciting world of scientific discovery.</span>
