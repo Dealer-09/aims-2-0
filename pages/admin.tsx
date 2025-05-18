@@ -50,8 +50,8 @@ export default function AdminDashboard() {
           ...doc.data(),
         })) as PDF[];
         setPdfs(pdfsData);
-      } catch (error) {
-        setPdfsError("Failed to load PDFs");
+    } catch {
+      setPdfsError("Failed to load PDFs");
       } finally {
         setPdfsLoading(false);
       }
@@ -215,7 +215,6 @@ export default function AdminDashboard() {
     fetchUsers();
   }, []);
   // Edit user class/subject or revoke access
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUserUpdate = async (userId: string, updates: Partial<User>) => {
     try {
       await updateDoc(doc(db, "users", userId), updates);
@@ -230,7 +229,7 @@ export default function AdminDashboard() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleUserRevoke = async (userId: string, email: string) => {
+  const handleUserRevoke = async (userId: string, _email: string) => {
     try {
       await updateDoc(doc(db, "users", userId), { role: "revoked" });
       setUsers((prev) =>
@@ -244,7 +243,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleApproval = async (id: string, email: string, status: string) => {
     if (status === "approved" && (!selectedClass[id] || !selectedSubject[id])) {
       alert("Please select a class and subject before approving.");

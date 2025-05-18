@@ -11,7 +11,7 @@ const RequestAccess: React.FC = () => {
     setStatus("");
     setCaptchaError("");
     // Get hCaptcha token from window
-    const captchaToken = (window as any).__hcaptchaToken;
+    const captchaToken = (window as { __hcaptchaToken?: string | null }).__hcaptchaToken;
     if (!captchaToken) {
       setCaptchaError("Please complete the CAPTCHA.");
       return;
@@ -26,10 +26,10 @@ const RequestAccess: React.FC = () => {
       if (res.ok) {
         setStatus({ type: "success", text: data.message });
         // Reset hCaptcha
-        (window as any).__hcaptchaToken = null;
-        // @ts-ignore
+        (window as { __hcaptchaToken?: string | null }).__hcaptchaToken = undefined;
+        // @ts-expect-error: hcaptcha is injected by external script and may not be typed
         if (typeof window !== "undefined" && window.hcaptcha && typeof window.hcaptcha.reset === "function") {
-          // @ts-ignore
+          // @ts-expect-error: hcaptcha is injected by external script and may not be typed
           window.hcaptcha.reset();
         }
       } else {
@@ -39,6 +39,25 @@ const RequestAccess: React.FC = () => {
       setStatus({ type: "error", text: "Something went wrong. Please try again." });
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
+      const script = document.createElement("script");
+      script.src = "https://js.hcaptcha.com/1/api.js";
+      script.async = true;
+      script.defer = true;
+      script.id = "hcaptcha-script";
+      document.body.appendChild(script);
+      // Add callback handler
+      const localScript = document.createElement("script");
+      localScript.src = "/hcaptcha.js";
+      localScript.async = true;
+      localScript.defer = true;
+      localScript.id = "hcaptcha-callback";
+      document.body.appendChild(localScript);
+    }
+  }, []);
+
 
   useEffect(() => {
     if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
@@ -138,25 +157,6 @@ const RequestAccess: React.FC = () => {
       </div>
     </section>
   );
-
-  // Load hCaptcha script
-  useEffect(() => {
-    if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
-      const script = document.createElement("script");
-      script.src = "https://js.hcaptcha.com/1/api.js";
-      script.async = true;
-      script.defer = true;
-      script.id = "hcaptcha-script";
-      document.body.appendChild(script);
-      // Add callback handler
-      const localScript = document.createElement("script");
-      localScript.src = "/hcaptcha.js";
-      localScript.async = true;
-      localScript.defer = true;
-      localScript.id = "hcaptcha-callback";
-      document.body.appendChild(localScript);
-    }
-  }, []);
 
 
 }
