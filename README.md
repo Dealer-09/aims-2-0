@@ -7,6 +7,7 @@ A modern educational platform for managing study materials, user access, and cla
 
 ## Features
 
+
 - **Request-Based User Access:**  
   Users request access; admins approve/reject and assign class/subject. Only approved users can sign up and access materials.
 
@@ -28,6 +29,18 @@ A modern educational platform for managing study materials, user access, and cla
 - **Authentication:**  
   - Secure sign-in/sign-up with Clerk  
   - Middleware-protected routes for admin and study areas
+
+- **Custom Chatbot:**
+  - Built-in chatbot (AskAIMS) for instant help and information about the institute, subjects, contact details, and more.
+
+- **Landing Page & Informational Sections:**
+  - Hero, About, Locations, Classes, Reviews, and Contact sections for a complete educational website experience.
+
+- **Student Reviews:**
+  - Swiper-powered reviews carousel with real student feedback.
+
+- **Contact & Social Links:**
+  - Contact form, email, phone, WhatsApp, and social media links.
 
 ---
 
