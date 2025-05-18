@@ -12,8 +12,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Valid email is required" });
   }
 
+  const normalizedEmail = email.toLowerCase();
+
   try {
-    const userRef = doc(db, "users", email);
+    const userRef = doc(db, "users", normalizedEmail);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {

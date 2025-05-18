@@ -9,7 +9,7 @@ export default function StudyPage() {
   const router = useRouter();
   const [approved, setApproved] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [pdfs, setPdfs] = useState<any[]>([]);
+  const [pdfs, setPdfs] = useState<Array<{ url: string; filename: string }>>([]);
   const [pdfsLoading, setPdfsLoading] = useState(false);
   const [pdfsError, setPdfsError] = useState("");
   const [userClass, setUserClass] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function StudyPage() {
         checkApprovalAndFetchUser(user?.primaryEmailAddress?.emailAddress, user?.id);
       }
     }
-    // eslint-disable-next-line
+    //
   }, [isLoaded, isSignedIn, user, router]);
 
   // Check approval and get user class/subject
@@ -43,8 +43,8 @@ export default function StudyPage() {
         setUserClass(userDoc.class || null);
         setUserSubject(userDoc.subject || null);
       }
-    } catch (error) {
-      console.error("Error checking approval:", error);
+    } catch {
+      // Error checking approval
     } finally {
       setLoading(false);
     }
@@ -63,8 +63,16 @@ export default function StudyPage() {
           where("subject", "==", userSubject)
         );
         const querySnapshot = await getDocs(q);
-        setPdfs(querySnapshot.docs.map((doc) => doc.data()));
-      } catch (err) {
+        setPdfs(
+          querySnapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              url: data.url ?? "",
+              filename: data.filename ?? "",
+            };
+          })
+        );
+      } catch {
         setPdfsError("Failed to load PDFs");
       } finally {
         setPdfsLoading(false);

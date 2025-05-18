@@ -66,7 +66,7 @@ export default function AdminDashboard() {
       await deleteDoc(doc(db, "pdfs", pdfId));
       setPdfs((prev) => prev.filter((p) => p.id !== pdfId));
       alert("PDF deleted.");
-    } catch (err) {
+    } catch {
       alert("Failed to delete PDF.");
     }
   };
@@ -123,8 +123,12 @@ export default function AdminDashboard() {
       setPdfFile(null);
       setPdfClass("");
       setPdfSubject("");
-    } catch (err: any) {
-      setUploadError("Failed to upload PDF: " + err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setUploadError("Failed to upload PDF: " + err.message);
+      } else {
+        setUploadError("Failed to upload PDF");
+      }
     } finally {
       setUploading(false);
     }
@@ -211,6 +215,7 @@ export default function AdminDashboard() {
     fetchUsers();
   }, []);
   // Edit user class/subject or revoke access
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUserUpdate = async (userId: string, updates: Partial<User>) => {
     try {
       await updateDoc(doc(db, "users", userId), updates);
@@ -219,12 +224,12 @@ export default function AdminDashboard() {
       );
       // Optionally send notification email here
       alert("User updated.");
-    } catch (error) {
-      console.error("Error updating user:", error);
+    } catch {
       alert("Failed to update user.");
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUserRevoke = async (userId: string, email: string) => {
     try {
       await updateDoc(doc(db, "users", userId), { role: "revoked" });
@@ -239,6 +244,7 @@ export default function AdminDashboard() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleApproval = async (id: string, email: string, status: string) => {
     if (status === "approved" && (!selectedClass[id] || !selectedSubject[id])) {
       alert("Please select a class and subject before approving.");

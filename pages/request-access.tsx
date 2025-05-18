@@ -1,28 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const RequestAccess: React.FC = () => {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | "" | null>("");
+  const [captchaError, setCaptchaError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("");
+    setCaptchaError("");
+    // Get hCaptcha token from window
+    const captchaToken = (window as any).__hcaptchaToken;
+    if (!captchaToken) {
+      setCaptchaError("Please complete the CAPTCHA.");
+      return;
+    }
     try {
       const res = await fetch("/api/request-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, captchaToken }),
       });
       const data = await res.json();
       if (res.ok) {
         setStatus({ type: "success", text: data.message });
+        // Reset hCaptcha
+        (window as any).__hcaptchaToken = null;
+        // @ts-ignore
+        if (typeof window !== "undefined" && window.hcaptcha && typeof window.hcaptcha.reset === "function") {
+          // @ts-ignore
+          window.hcaptcha.reset();
+        }
       } else {
         setStatus({ type: "error", text: data.error || data.message });
       }
-    } catch (err) {
+    } catch {
       setStatus({ type: "error", text: "Something went wrong. Please try again." });
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
+      const script = document.createElement("script");
+      script.src = "https://js.hcaptcha.com/1/api.js";
+      script.async = true;
+      script.defer = true;
+      script.id = "hcaptcha-script";
+      document.body.appendChild(script);
+      // Add callback handler
+      const localScript = document.createElement("script");
+      localScript.src = "/hcaptcha.js";
+      localScript.async = true;
+      localScript.defer = true;
+      localScript.id = "hcaptcha-callback";
+      document.body.appendChild(localScript);
+    }
+  }, []);
 
   return (
     <section className="request-access container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
@@ -39,7 +73,7 @@ const RequestAccess: React.FC = () => {
         alignItems: 'center',
       }}>
         <h2 className="heading" style={{ fontSize: '2.2rem', marginBottom: '1.5rem', color: '#647bff', letterSpacing: 1 }}>Request Access</h2>
-        <form onSubmit={handleRequest} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <form ref={formRef} onSubmit={handleRequest} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <input
             type="email"
             placeholder="Enter your email"
@@ -57,6 +91,18 @@ const RequestAccess: React.FC = () => {
               transition: 'border 0.2s',
             }}
           />
+          {/* hCaptcha widget */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div
+              className="h-captcha"
+              data-sitekey="e4de2af6-883a-466a-a85c-2e7481c422ba"
+              data-callback="onHCaptchaSuccess"
+              data-theme="light"
+            ></div>
+          </div>
+          {captchaError && (
+            <p style={{ color: '#e74c3c', fontSize: '0.98rem', margin: 0 }}>{captchaError}</p>
+          )}
           <button type="submit" className="btn1" style={{
             width: '100%',
             padding: '0.8rem 0',
@@ -92,6 +138,27 @@ const RequestAccess: React.FC = () => {
       </div>
     </section>
   );
-};
+
+  // Load hCaptcha script
+  useEffect(() => {
+    if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
+      const script = document.createElement("script");
+      script.src = "https://js.hcaptcha.com/1/api.js";
+      script.async = true;
+      script.defer = true;
+      script.id = "hcaptcha-script";
+      document.body.appendChild(script);
+      // Add callback handler
+      const localScript = document.createElement("script");
+      localScript.src = "/hcaptcha.js";
+      localScript.async = true;
+      localScript.defer = true;
+      localScript.id = "hcaptcha-callback";
+      document.body.appendChild(localScript);
+    }
+  }, []);
+
+
+}
 
 export default RequestAccess;
