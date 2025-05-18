@@ -1,8 +1,47 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Node dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Environment files
+.env*
 .env.local
-# dependencies
-/node_modules
-/.pnp
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+
+# Misc
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel/
+
+# Test coverage
+coverage/
+
+# Yarn
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,33 +49,15 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+# Mac system files
 .DS_Store
-*.pem
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# Windows system files
+Thumbs.db
 
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Ignore build artifacts in all subfolders
+**/.next/
+**/out/
+**/build/
+**/coverage/
 
