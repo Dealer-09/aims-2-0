@@ -11,7 +11,8 @@ const RequestAccess: React.FC = () => {
     setStatus("");
     setCaptchaError("");
     // Get hCaptcha token from window
-    const captchaToken = (window as { __hcaptchaToken?: string | null }).__hcaptchaToken;
+    // Use a more specific type for window
+    const captchaToken = (window as typeof window & { __hcaptchaToken?: string }).__hcaptchaToken;
     if (!captchaToken) {
       setCaptchaError("Please complete the CAPTCHA.");
       return;
@@ -26,10 +27,10 @@ const RequestAccess: React.FC = () => {
       if (res.ok) {
         setStatus({ type: "success", text: data.message });
         // Reset hCaptcha
-        (window as { __hcaptchaToken?: string | null }).__hcaptchaToken = undefined;
-        // @ts-expect-error: hcaptcha is injected by external script and may not be typed
+        (window as typeof window & { __hcaptchaToken?: string }).__hcaptchaToken = undefined;
+        // @ts-expect-error: hcaptcha is injected by external script and is not typed in TS DOM lib, safe to ignore for reset
         if (typeof window !== "undefined" && window.hcaptcha && typeof window.hcaptcha.reset === "function") {
-          // @ts-expect-error: hcaptcha is injected by external script and may not be typed
+          // @ts-expect-error: hcaptcha is injected by external script and is not typed in TS DOM lib, safe to ignore for reset
           window.hcaptcha.reset();
         }
       } else {

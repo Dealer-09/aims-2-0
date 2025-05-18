@@ -50,8 +50,8 @@ export default function AdminDashboard() {
           ...doc.data(),
         })) as PDF[];
         setPdfs(pdfsData);
-    } catch {
-      setPdfsError("Failed to load PDFs");
+      } catch {
+        setPdfsError("Failed to load PDFs");
       } finally {
         setPdfsLoading(false);
       }
@@ -208,8 +208,8 @@ export default function AdminDashboard() {
           ...doc.data(),
         })) as User[];
         setUsers(usersData);
-      } catch (error) {
-        console.error("Firestore Error (users):", error);
+      } catch {
+        // Firestore error fetching users
       }
     }
     fetchUsers();
@@ -228,6 +228,7 @@ export default function AdminDashboard() {
     }
   };
 
+  // The _email parameter is required by the call signature but is intentionally unused.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleUserRevoke = async (userId: string, _email: string) => {
     try {
@@ -237,8 +238,7 @@ export default function AdminDashboard() {
       );
       // Optionally send notification email here
       alert("User access revoked.");
-    } catch (error) {
-      console.error("Error revoking user:", error);
+    } catch {
       alert("Failed to revoke user.");
     }
   };
