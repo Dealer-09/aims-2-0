@@ -1,45 +1,42 @@
 import { useEffect } from "react";
-import { useUser, SignUp } from "@clerk/nextjs";
+import { useUser, SignIn } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 
-export default function SignUpPage() {
+export default function SignInPage() {
   const { isSignedIn, user, isLoaded } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      const email = user?.primaryEmailAddress?.emailAddress; // ✅ Get email
-      if (!email) return;
+    if (isLoaded && isSignedIn && user?.emailAddresses?.[0]?.emailAddress) {
+      const email = user.emailAddresses[0].emailAddress;
 
-      // ✅ Fetch user role before assigning or redirecting
-      fetch("/api/get-user-role", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${user.id}`,
-        },
-      })
+      // Check if user is approved in Firebase
+      fetch(`/api/check-approval?email=${encodeURIComponent(email)}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.role === "admin") {
-            router.push("/admin"); // 🚀 Redirect admins
-          } else if (data.role === "student") {
-            router.push("/study"); // 🚀 Redirect students
+          if (data.approved) {
+            if (data.role === "admin") {
+              router.push("/admin");
+            } else {
+              router.push("/study");
+            }
           } else {
-            alert("Your account is not approved yet.");
-            router.push("/sign-in");
+            // Not approved - show message and sign out
+            alert(data.message || "You are not approved to access this site. Please request access first.");
+            router.push("/request-access");
           }
         })
         .catch((err) => {
-          console.error("Error checking role:", err);
-          router.push("/sign-in"); // ❌ Redirect to sign-in if error
+          console.error("Error checking approval:", err);
+          alert("Error checking access status. Please try again.");
         });
     }
   }, [isSignedIn, isLoaded, user, router]);
 
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
-      <h2>Sign Up</h2>
-      <SignUp />
+    <div style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "2rem" }}>Sign In</h1>
+      <SignIn redirectUrl={user?.publicMetadata?.role === "admin" ? "/admin" : "/study"} />
     </div>
   );
 }

@@ -1,35 +1,43 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const sessionToken = req.headers.authorization?.replace("Bearer ", "");
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
-    if (!sessionToken) {
-      console.log("❌ No session token found in headers.");
-      return res.status(401).json({ error: "Not authenticated" });
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const userId = authHeader.substring(7); // Remove "Bearer " prefix
+  if (!userId) {
+    return res.status(401).json({ error: "Invalid authorization token" });
+  }
+
+  try {
+    const userEmail = req.query.email as string;
+    if (!userEmail) {
+      return res.status(400).json({ error: "Email is required" });
     }
 
-    console.log("🔎 Received session token:", sessionToken);
-
-    // Optional: Normalize token if it's an email
-    const normalizedToken = sessionToken.toLowerCase();
-
-    const userRef = doc(db, "users", normalizedToken); // Assuming token = email or userId
+    const userRef = doc(db, "users", userEmail);
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      console.log("❌ User not found in Firestore for ID:", normalizedToken);
-      return res.status(403).json({ error: "User not found" });
+      return res.status(200).json({ role: "none" });
     }
 
     const userData = userSnap.data();
-    console.log("✅ Firestore Role Found:", userData.role);
-    return res.status(200).json({ role: userData.role });
-
+    return res.status(200).json({
+      role: userData.role || "none",
+      class: userData.class,
+      subject: userData.subject
+    });
   } catch (error) {
-    console.error("❌ Firestore Error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching user role:", error);
+    return res.status(500).json({ error: "Failed to fetch user role" });
   }
 }
