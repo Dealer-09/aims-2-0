@@ -3,10 +3,27 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* ✅ Boxicons FIX */}
+        {/* Meta tags for better SEO and social sharing */}
+        <meta name="description" content="AIMS - Amit Institute of Math's and Science. Join our science institute for quality education in mathematics and science." />
+        <meta property="og:title" content="AIMS - Amit Institute of Math's and Science" />
+        <meta property="og:description" content="Join AIMS for quality education in mathematics and science." />
+        <meta property="og:type" content="website" />
+        <meta name="theme-color" content="#647bff" />
+        
+        {/* Preload critical assets */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
+        
+        {/* Icons and fonts */}
         <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+        
+        {/* Accessibility improvements */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
       </Head>
       <body>
+        {/* Skip to content link for accessibility */}
+        <a href="#main-content" className="skip-to-main">Skip to main content</a>
         <Main />
         <NextScript />
       </body>

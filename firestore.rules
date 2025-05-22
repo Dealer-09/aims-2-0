@@ -1,0 +1,82 @@
+// Firebase Firestore Rules 
+// Copy and paste these rules into your Firebase console
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Restrict access_requests collection
+    match /access_requests/{docId} {
+      // Anyone can create a request, but with validations
+      allow create: if
+        // Validate required fields
+        request.resource.data.keys().hasAll(['email', 'requestedAt', 'status']) &&
+        // Validate email format
+        request.resource.data.email is string &&
+        request.resource.data.email.matches('^[^@]+@[^@]+\\.[^@]+$') &&
+        // Force status to be 'pending' on creation
+        request.resource.data.status == 'pending';
+      
+      // Only allow reading their own request or admins
+      allow read: if 
+        // Can read their own request by email
+        request.auth != null && 
+        (resource.data.email == request.auth.token.email || 
+        // Or allow reading if requester is an admin (checked via users collection)
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      // Updates only by admins for approval/rejection
+      allow update: if 
+        request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }    // Control access to users collection
+    match /users/{userId} {
+      // Public function to check if a user is approved
+      function isUserApproved(email) {
+        return exists(/databases/$(database)/documents/users/$(email)) && 
+               get(/databases/$(database)/documents/users/$(email)).data.role == 'student';
+      }
+        // Allow reading only necessary fields for approval check from client side
+      allow read: if 
+        // Basic read to check if the doc exists and the role
+        request.query.limit <= 1;
+        
+      // Allow admins to manage all user documents
+      allow read, write: if 
+        request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        
+      // Users can update limited fields of their own document
+      allow update: if 
+        request.auth != null && 
+        request.auth.uid == userId &&
+        // Only allow updating specific fields, not role or admin status
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['displayName', 'photoURL', 'lastLogin']);
+    }
+      // PDF collection access rules
+    match /pdfs/{docId} {
+      // Allow authenticated users to read PDFs
+      allow read: if request.auth != null;
+      
+      // Only admins can create, update, or delete PDFs
+      allow write: if 
+        request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        
+      // Validate PDF data structure
+      allow create, update: if 
+        request.resource.data.keys().hasAll(['url', 'filename', 'class', 'subject', 'uploadedBy', 'uploadedAt']) &&
+        request.resource.data.url is string &&
+        request.resource.data.filename is string &&
+        request.resource.data.class in ['Class 10', 'Class 12'] &&
+        request.resource.data.subject in ['Math', 'Physics'];
+    }
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

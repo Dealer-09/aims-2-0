@@ -40,9 +40,7 @@
   bottom: 80px;
   right: 20px;
   width: 350px;
-  max-width: 90%;
-  background: rgba(23, 27, 60, 0.75);
-  backdrop-filter: blur(10px);
+  max-width: 90%;  background: rgba(23, 27, 60, 0.95);
   color: #fff;
   border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
