@@ -108,6 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const filename = `${Date.now()}-${pdfFile.originalFilename.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       
       // Upload to GridFS
+      console.log(`Creating upload stream for file: ${filename}`);
       const uploadStream = bucket.openUploadStream(filename);
       
       try {
@@ -119,6 +120,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
           
           uploadStream.on('finish', () => {
+            console.log(`Successfully uploaded file to GridFS: ${filename}`);
             resolve();
           });
           
@@ -126,29 +128,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           uploadStream.end(fileData);
         });
         
+        console.log(`File uploaded successfully, creating metadata document with fileId: ${uploadStream.id}`);
+        
         // After successful upload, create PDF metadata document
-        const newPdf = new PdfModel({
-          filename,
-          originalName: pdfFile.originalFilename,
-          fileId: uploadStream.id,
-          class: pdfClass,
-          subject: pdfSubject,
-          size: pdfFile.size,
-          uploadedAt: new Date(),
-          uploadedBy: normalizedEmail
-        });
-        
-        await newPdf.save();
-        
-        return res.status(200).json({ 
-          success: true, 
-          pdf: {
-            id: newPdf._id.toString(),
-            filename: pdfFile.originalFilename,
+        try {
+          const newPdf = new PdfModel({
+            filename,
+            originalName: pdfFile.originalFilename,
+            fileId: uploadStream.id,
             class: pdfClass,
-            subject: pdfSubject
+            subject: pdfSubject,
+            size: pdfFile.size,
+            uploadedAt: new Date(),
+            uploadedBy: normalizedEmail
+          });
+          
+          await newPdf.save();
+          console.log(`PDF metadata saved with ID: ${newPdf._id}`);
+          
+          return res.status(200).json({ 
+            success: true, 
+            pdf: {
+              id: newPdf._id.toString(),
+              filename: pdfFile.originalFilename,
+              class: pdfClass,
+              subject: pdfSubject
+            }
+          });
+        } catch (metadataError) {
+          console.error("Error saving PDF metadata:", metadataError);
+          
+          // If metadata saving fails, clean up the GridFS file
+          try {
+            await bucket.delete(uploadStream.id);
+            console.log(`Cleaned up GridFS file after metadata save failure: ${uploadStream.id}`);
+          } catch (cleanupError) {
+            console.error("Error cleaning up GridFS file after metadata save failure:", cleanupError);
           }
-        });
+          
+          throw metadataError;
+        }
       } catch (error) {
         console.error("Error in upload process:", error);
         

@@ -13,11 +13,11 @@ const Navbar: React.FC = () => {
       if (scrolled) setScrolled(false);
     }
   }, [scrolled]);
-
   // Close menu when clicking outside
   const handleClickOutside = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (menuOpen && !target.closest('.navbar') && !target.closest('.menu-icon')) {
+    // Improved check to ensure menu closes when clicking outside
+    if (menuOpen && !target.closest('.navbar') && !target.closest('.menu-icon') && !target.closest('header')) {
       setMenuOpen(false);
     }
   }, [menuOpen]);
@@ -28,7 +28,6 @@ const Navbar: React.FC = () => {
       setMenuOpen(false);
     }
   }, [menuOpen]);
-
   useEffect(() => {
     // Add scroll listener with throttling
     let timeoutId: NodeJS.Timeout;
@@ -50,17 +49,28 @@ const Navbar: React.FC = () => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
       clearTimeout(timeoutId);
+      
+      // Ensure menu-open class is removed when component unmounts
+      document.body.classList.remove('menu-open');
     };
   }, [handleScroll, handleClickOutside, handleKeyDown]);
-
   // Handle menu toggle
   const toggleMenu = () => {
-    setMenuOpen(prev => !prev);
+    const newMenuState = !menuOpen;
+    setMenuOpen(newMenuState);
+    
+    // Add or remove class on body for global styling when menu is open
+    if (newMenuState) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
   };
 
   // Close menu when a navigation link is clicked
   const closeMenu = () => {
     setMenuOpen(false);
+    document.body.classList.remove('menu-open');
   };
 
   const getNavLinkStyle = (index: number): CSSProperties => ({
@@ -73,9 +83,8 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <Link href="#" className="logo" aria-label="AIMS Home">AIMS</Link>
 
-        {/* Navigation Bar */}
-        <nav role="navigation" aria-label="Main navigation">
-          <ul className={`navbar ${menuOpen ? "open-menu" : ""}`}>
+        {/* Navigation Bar */}        <nav role="navigation" aria-label="Main navigation">
+          <ul className={`navbar ${menuOpen ? "open-menu" : ""}`} id="navbar">
             <li><Link href="#home" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(0)}>Home</Link></li>
             <li><Link href="#about" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(1)}>About</Link></li>
             <li><Link href="#location" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(2)}>Location</Link></li>
@@ -89,8 +98,7 @@ const Navbar: React.FC = () => {
           </ul>
         </nav>
 
-        {/* Menu Icon - with proper ARIA attributes */}
-        <button 
+        {/* Menu Icon - with proper ARIA attributes */}        <button 
           className={`menu-icon ${menuOpen ? "move" : ""}`} 
           onClick={toggleMenu}
           aria-expanded={menuOpen}
@@ -99,31 +107,11 @@ const Navbar: React.FC = () => {
         >
           <div className="line1"></div>
           <div className="line2"></div>
-          <div className="line3"></div>
-        </button>
-      </div>        {/* Overlay when menu is open on mobile */}
-      <div 
-        className={`menu-overlay ${menuOpen ? 'active' : ''}`}
-        aria-hidden="true"
-        onClick={closeMenu}
-      /><style jsx>{`
-        .menu-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.85);
-          z-index: 1000;
-          opacity: 0;
-          transition: opacity 0.3s ease-in-out;
-          pointer-events: none;
-        }
-        
-        .menu-overlay.active {
-          opacity: 1;
-          pointer-events: auto;
-        }
+          <div className="line3"></div>        </button>
+      </div>
+      {/* Overlay removed for better mobile interaction */}
+        <style jsx>{`
+        /* Menu overlay has been completely removed */
         
         .sign-in {
           display: flex;
@@ -141,12 +129,37 @@ const Navbar: React.FC = () => {
           background-color: #546eff !important;
           transform: translateY(-2px);
         }
-        
-        @media (max-width: 775px) {
+          @media (max-width: 775px) {
           .sign-in {
             margin: 1rem 0 0 0;
             width: 100%;
             justify-content: center;
+          }          /* Make links explicitly clickable on mobile */
+          .navbar li {
+            width: 100%;
+            position: relative;
+            z-index: 1002; /* Ensure links are above overlay */
+            margin-bottom: 8px; /* Add space between items */
+            transform: translateZ(0); /* Create a new stacking context */
+            pointer-events: auto !important; /* Force pointer events to work */
+          }
+          
+          .nav-link {
+            display: block !important;
+            width: 100%;
+            position: relative;
+            z-index: 1005; /* Higher z-index than overlay */
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            transition: background-color 0.3s;
+            padding: 12px !important; /* Increase touch target size */
+            -webkit-tap-highlight-color: rgba(100, 123, 255, 0.2); /* Better visual feedback on iOS */
+          }
+          
+          /* Add touchable feedback for mobile */
+          .nav-link:active {
+            background-color: rgba(100, 123, 255, 0.3) !important;
+            transform: scale(0.98); /* Subtle press effect */
           }
         }
       `}</style>

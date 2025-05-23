@@ -7,13 +7,19 @@ let clientPromise: Promise<MongoClient>;
 let isConnected = false;
 
 const uri = process.env.MONGODB_URI;
-// Use the recommended MongoDB Atlas settings
+// Use the recommended MongoDB Atlas settings with enhanced TLS options
 const options = {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
+  ssl: true,
+  tls: true,
+  tlsAllowInvalidCertificates: true,
+  maxPoolSize: 10,
+  connectTimeoutMS: 30000,
+  socketTimeoutMS: 30000
 };
 
 if (!uri) {
@@ -44,12 +50,24 @@ export async function connectToMongoDB() {
   }
   
   try {
-    await mongoose.connect(uri as string, {
+    console.log('Attempting to connect to MongoDB (production)...');
+    
+    if (!uri) {
+      console.error('MongoDB URI is not defined in environment variables!');
+      throw new Error('MongoDB URI is missing from environment configuration');
+    }
+      await mongoose.connect(uri as string, {
       serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
         deprecationErrors: true,
-      }
+      },
+      ssl: true,
+      tls: true,
+      tlsAllowInvalidCertificates: true,
+      maxPoolSize: 10,
+      connectTimeoutMS: 30000,
+      socketTimeoutMS: 30000
     });
     isConnected = true;
     

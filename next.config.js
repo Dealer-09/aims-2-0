@@ -27,7 +27,6 @@ const nextConfig = {
     };
     return config;
   },  // Production optimizations
-  swcMinify: true,
 }
 
 module.exports = nextConfig

@@ -4,8 +4,6 @@
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
 
-/* ✅ Replaces '@tailwind utilities' */
-/* ✅ No need for '@tailwind components' */
 * {
   font-family: 'Poppins', sans-serif;
   margin: 0;
@@ -138,7 +136,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 1000; /* Increased z-index to be above other content */
 }
 
 .header-active {
@@ -164,6 +162,7 @@ header {
   display: flex;
   align-items: center;
   column-gap: 1.5rem;
+  will-change: transform, opacity; /* Optimize mobile animations */
 }
 
 .nav-link {
@@ -171,6 +170,7 @@ header {
   padding: 4px 8px;
   border-radius: 0.2rem;
   color: var(--bg-color);
+  touch-action: manipulation; /* Improve tap response on touch devices */
 }
 
 .nav-link:hover {
@@ -792,14 +792,23 @@ social {
 
 /* Mobile responsiveness - keep buttons aligned */
 @media (max-width: 768px) {
-  .scroll-top,
+  .scroll-top {
+    right: 20px; /* Keep consistent with chat button */
+    bottom: -100%; /* Hide by default */
+  }
+  
   .scroll-active {
     right: 20px; /* Keep consistent with chat button */
+    bottom: 120px; /* Show when active */
   }
 }
 
 @media (max-width: 480px) {
-  .scroll-top,
+  .scroll-top {
+    right: 20px; /* Keep consistent with chat button */
+    bottom: -100%; /* Hide by default */
+  }
+  
   .scroll-active {
     right: 20px; /* Keep consistent with chat button */
     bottom: 100px; /* Slightly closer on mobile for better spacing */
@@ -829,14 +838,25 @@ social {
 
 }
 
+/* Fix for navbar links in mobile view */
 @media (max-width:775px) {
+  /* Ensure navbar is accessible and clickable */
+  .navbar {
+    pointer-events: auto !important;
+  }
+  
+  /* Explicitly make each link clickable */
+  .navbar li a {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
   .logo {
     font-size: 1.1rem;
-  }
-
-  .home {
+  }  .home {
     min-height: 500px;
-    padding-top: 6rem;
+    padding-top: 20rem; /* Increased padding to lower homepage content on mobile */
+    position: relative;
+    z-index: 1; /* Ensure home section has proper stacking context */
   }
 
   .home-text h3 {
@@ -855,10 +875,12 @@ social {
   .location-content {
     grid-template-columns: repeat(2, 1fr);
   }
-    /* Mobile navigation styles */
-  header {    background: rgba(13, 15, 38, 0.95);
+  /* Mobile navigation styles */
+  header {    
+    background: rgba(13, 15, 38, 0.95);
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: relative; /* Ensure proper stacking context */
   }
 
   .menu-icon {
@@ -880,8 +902,7 @@ social {
     width: 24px;
     height: 2px;
     border-radius: 2px;
-  }
-  .navbar {
+  }  .navbar {
     position: fixed;
     top: 0;
     right: -100%;
@@ -890,21 +911,31 @@ social {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 80px 20px 20px;    background: rgba(23, 27, 60, 0.97);
-    box-shadow: -2px 0 15px rgba(0, 0, 0, 0.3);
+    padding: 80px 20px 20px;
+    background: rgba(13, 15, 38, 0.97); /* Darker background for better contrast */
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5); /* Stronger shadow for definition */
     z-index: 1001;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     transform: translateX(100%);
     opacity: 0;
+    pointer-events: none; /* Disable pointer events when menu is closed */
+    will-change: transform, opacity; /* Optimize rendering */
   }
-
-  .open-menu {
+  
+  .navbar li {
+    width: 100%;
+    position: relative;
+    z-index: 1002;
+    margin-bottom: 0.5rem;
+  }  .open-menu {
     transform: translateX(0);
     opacity: 1;
     right: 0;
-  }
-
-  .nav-link {
+    pointer-events: auto !important; /* Ensure clickability when menu is open */
+    touch-action: auto !important; /* Ensure touch events work properly */
+    isolation: isolate; /* Create stacking context for menu items */
+    z-index: 1003; /* Ensure menu is above overlay */
+  }.nav-link {
     display: block;
     width: 100%;
     margin: 0.5rem 0;
@@ -919,12 +950,19 @@ social {
     font-weight: 500;
     letter-spacing: 0.5px;
     background: rgba(100, 123, 255, 0.1);
+    position: relative;
+    z-index: 1003;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: rgba(100, 123, 255, 0.2); /* Improves touch feedback */
   }
-
   .open-menu .nav-link {
     opacity: 1;
     transform: translateX(0);
     transition: all 0.3s ease-in-out;
+    z-index: 1003;
+    pointer-events: auto !important;
+    position: relative; /* Create stacking context */
   }
 
   .open-menu .nav-link:nth-child(1) { transition-delay: 0.1s; }
@@ -939,7 +977,6 @@ social {
     color: #ffffff;
     transform: translateY(-2px);
   }
-
   /* Improved loading overlay */
   .loading-overlay {
     position: fixed;
@@ -948,8 +985,8 @@ social {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
+    z-index: 998; /* Lower than navbar and menu items */
+    /* Removed backdrop-filter that could cause interaction issues */
   }
 
   .loading-spinner {
@@ -987,7 +1024,7 @@ social {
 @media (max-width:450px) {
   .home {
     min-height: 485px;
-    padding-top: 5rem;
+    padding-top: 8rem; /* Increased padding to ensure content doesn't touch navbar */
   }
 
   .home-img {
@@ -1031,6 +1068,42 @@ social {
 @media(max-width:325px) {
   .nav-bar {
     width: 100%;
+  }
+}
+
+/* Fix for nav links touch action */
+.nav-link {
+  touch-action: manipulation; /* Improve tap response on touch devices */
+  position: relative; /* Create stacking context */
+  z-index: 10; /* Base z-index for all nav links */
+}
+
+/* Specifically target mobile nav links */
+@media (max-width: 775px) {
+  .navbar .nav-link {
+    position: relative;
+    z-index: 1005; /* Ensure higher z-index in mobile view */
+  }
+}
+
+@media (max-width: 775px) {
+  /* Ensure Home content doesn't overlap with mobile menu */
+  .menu-open .home-content {
+    pointer-events: none;
+  }
+  
+  /* Add margin to the home content for better spacing on mobile */
+  .home-content {
+    margin-top: 1rem;
+  }
+  
+  /* Make navbar itself properly interactive */
+  .navbar.open-menu {
+    height: 100vh;
+    overflow-y: auto; /* Make scrollable if needed */
+    overscroll-behavior: contain; /* Prevent body scroll while menu scrolls */
+    touch-action: pan-y; /* Allow vertical scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 }
 

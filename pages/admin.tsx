@@ -124,7 +124,6 @@ export default function AdminDashboard() {
 
     fetchUsers();
   }, [isAdmin]);
-
   // Fetch PDFs
   useEffect(() => {
     const fetchPDFs = async () => {
@@ -137,7 +136,15 @@ export default function AdminDashboard() {
         const response = await fetch('/api/admin/get-pdfs');
         
         if (!response.ok) {
-          throw new Error(`Failed to fetch PDFs: ${response.status} ${response.statusText}`);
+          // Attempt to get more detailed error info
+          let errorMessage;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorData.details || `${response.status} ${response.statusText}`;
+          } catch (jsonError) {
+            errorMessage = `${response.status} ${response.statusText}`;
+          }
+          throw new Error(`Failed to fetch PDFs: ${errorMessage}`);
         }
         
         const data = await response.json();
@@ -146,7 +153,7 @@ export default function AdminDashboard() {
         setPdfs(data.pdfs);
       } catch (error) {
         console.error("Error fetching PDFs:", error);
-        alert("Error loading PDFs. See console for details.");
+        alert(`Error loading PDFs: ${error instanceof Error ? error.message : "Unknown error"}`);
       }
     };
     
@@ -260,11 +267,11 @@ export default function AdminDashboard() {
       console.error("Error revoking access:", error);
       alert(`Failed to revoke access: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
-  };
-
-  // Handle PDF upload
+  };  // Handle PDF upload
   const handlePdfUpload = async (file: File, pdfClass: string, pdfSubject: string) => {
     try {
+      console.log(`Uploading PDF: ${file.name}, Class: ${pdfClass}, Subject: ${pdfSubject}`);
+      
       // Create a FormData object for the file upload
       const formData = new FormData();
       formData.append('file', file);
@@ -278,18 +285,39 @@ export default function AdminDashboard() {
       });
       
       if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(errorData.error || `Upload failed: ${uploadResponse.status}`);
+        let errorMessage = `Upload failed: ${uploadResponse.status}`;
+        try {
+          const errorData = await uploadResponse.json();
+          errorMessage = errorData.error || errorMessage;
+          if (errorData.details) {
+            errorMessage += ` - ${errorData.details}`;
+          }
+        } catch (jsonError) {
+          // If JSON parsing fails, use the default error message
+          console.error("Failed to parse error JSON:", jsonError);
+        }
+        throw new Error(errorMessage);
       }
       
+      console.log("PDF uploaded successfully, refreshing PDF list");
+      
       // Refresh the PDFs list
-      const response = await fetch('/api/admin/get-pdfs');
-      if (response.ok) {
-        const data = await response.json();
-        setPdfs(data.pdfs);
+      try {
+        const response = await fetch('/api/admin/get-pdfs');
+        if (response.ok) {
+          const data = await response.json();
+          setPdfs(data.pdfs);
+        } else {
+          console.warn("Failed to refresh PDFs list after upload:", response.status);
+        }
+      } catch (refreshError) {
+        console.warn("Error refreshing PDFs after upload:", refreshError);
+        // Continue anyway since the upload was successful
       }
+      
+      // No return value needed (void)
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error("PDF upload error:", error);
       throw error; // Let the PdfManagement component handle the error
     }
   };

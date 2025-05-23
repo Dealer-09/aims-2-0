@@ -1,0 +1,205 @@
+/* Additional mobile optimizations for admin cards */
+
+/* ==================== */
+/*     Base Styles      */
+/* ==================== */
+
+/* Container and Layout styles */
+.formContainer {
+  margin-bottom: 1.5rem;
+}
+
+.sectionContainer {
+  margin-top: 2rem;
+}
+
+/* Table styles */
+.adminCardTableContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  border-radius: 8px;
+  border: 1px solid rgba(100, 123, 255, 0.2);
+  overflow: auto;
+}
+
+.adminTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Set a minimum width to handle small screens */
+}
+
+.adminTable th,
+.adminTable td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.adminTable th {
+  background-color: rgba(13, 15, 38, 0.8);
+  color: var(--bg-color);
+  border-bottom: 1px solid var(--main-color);
+}
+
+.adminTable tr:nth-child(even) {
+  background-color: rgba(13, 15, 38, 0.5);
+}
+
+.adminTable tr:nth-child(odd) {
+  background-color: rgba(13, 15, 38, 0.4);
+}
+
+/* Card and content styles */
+.userCardContent {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.cardText {
+  font-size: 1rem;
+  color: var(--bg-color);
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Form elements */
+.cardFormGroup select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 123, 255, 0.4);
+  background: rgba(13, 15, 38, 0.6);
+  color: var(--bg-color);
+  min-width: 110px;
+}
+
+/* Button styles */
+.cardButton {
+  padding: 0.5rem 1rem;
+  background: rgba(231, 76, 60, 0.85);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.deleteButton {
+  padding: 0.4rem 1rem;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* PDF file link styling */
+.fileLink {
+  color: var(--main-color);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fileLink span {
+  font-size: 0.9rem;
+}
+
+/* Headings */
+.sectionHeading {
+  margin-bottom: 1rem;
+  color: var(--main-color);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Message displays */
+.noContentMessage {
+  color: var(--bg-color);
+  font-style: italic;
+  opacity: 0.7;
+  padding: 1rem;
+  background: rgba(13, 15, 38, 0.4);
+  border-radius: 6px;
+  text-align: center;
+  border: 1px dashed rgba(100, 123, 255, 0.3);
+}
+
+/* ====================== */
+/* Responsive Adjustments */
+/* ====================== */
+
+/* Tablet and Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Table adjustments */
+  .adminCardTableContainer {
+    margin: 0 -0.85rem;
+    padding: 0 0.85rem;
+    width: calc(100% + 1.7rem);
+  }
+  
+  /* Card layout adjustments */
+  .userCardContent {
+    flex-direction: column !important;
+  }
+  
+  /* Form element adjustments */
+  .cardFormGroup {
+    flex-direction: column;
+  }
+  
+  .cardFormGroup > * {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    flex: 1;
+  }
+  
+  /* Button adjustments */
+  .cardButton, 
+  .deleteButton {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  /* Text handling */
+  .cardText {
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
+
+/* Extra small device optimizations */
+@media (max-width: 480px) {
+  /* Further adjust table padding */
+  .adminCardTableContainer {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+    width: calc(100% + 1.5rem);
+  }
+  
+  /* Tighten action buttons */
+  .cardActions {
+    gap: 0.4rem !important;
+  }
+  
+  /* Adjust font sizes for very small screens */
+  .sectionHeading {
+    font-size: 1rem;
+  }
+}

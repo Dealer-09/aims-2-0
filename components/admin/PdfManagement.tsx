@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from '../../styles/admin.module.css';
+import cardStyles from '../../styles/admin-card-fixes.module.css';
 
 type PDF = {
   id: string;
@@ -60,20 +61,18 @@ export default function PdfManagement({ pdfs, onUpload, onDelete }: PdfManagemen
     }
   };
   return (
-    <section className={styles.adminSection}>
-      <h2 className={styles.sectionTitle}>
+    <section className={styles.adminSection}>      <h2 className={styles.sectionTitle}>
         <span className={styles.sectionIconWrapper}>📄</span>
         PDF Management
       </h2>
-        <form onSubmit={handlePdfUpload} style={{ marginBottom: "1.5rem" }}>
-        <div className={styles.formGroup}>
+      <form onSubmit={handlePdfUpload} className={cardStyles.formContainer}>
+        <div className={`${styles.formGroup} ${cardStyles.cardFormGroup}`}>
           <input
             type="file"
             accept="application/pdf"
             onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
             className={styles.fileInput}
-          />
-          <select 
+          />          <select 
             value={pdfClass} 
             onChange={(e) => setPdfClass(e.target.value)}
             className={styles.select}
@@ -82,7 +81,8 @@ export default function PdfManagement({ pdfs, onUpload, onDelete }: PdfManagemen
             <option value="" style={{ color: "#ddd", fontWeight: "600", backgroundColor: "var(--box-color)" }}>Select Class</option>
             <option value="Class 10" style={{ color: "#ddd", fontWeight: "500", backgroundColor: "var(--box-color)" }}>Class 10</option>
             <option value="Class 12" style={{ color: "#ddd", fontWeight: "500", backgroundColor: "var(--box-color)" }}>Class 12</option>
-          </select>          <select 
+          </select>
+          <select 
             value={pdfSubject} 
             onChange={(e) => setPdfSubject(e.target.value)}
             className={styles.select}
@@ -105,102 +105,54 @@ export default function PdfManagement({ pdfs, onUpload, onDelete }: PdfManagemen
             {uploadError}
           </div>
         )}
-        {uploadSuccess && (
-          <div className={styles.successMessage}>
+        {uploadSuccess && (          <div className={styles.successMessage}>
             {uploadSuccess}
           </div>
         )}
       </form>
-
-      <div style={{ marginTop: "2rem" }}>
-        <h3 style={{ 
-          marginBottom: "1rem", 
-          color: "var(--main-color)", 
-          fontWeight: "600",
-          fontSize: "1.1rem" 
-        }}>
+      <div className={cardStyles.sectionContainer}><h3 className={cardStyles.sectionHeading}>
           Uploaded PDFs
         </h3>
         {pdfs.length > 0 ? (
-          <div style={{ 
-            borderRadius: "8px", 
-            overflow: "hidden",
-            border: "1px solid rgba(100, 123, 255, 0.2)"
-          }}>
-            <table style={{ 
-              width: "100%", 
-              borderCollapse: "collapse"
-            }}>
+          <div className={cardStyles.adminCardTableContainer}>
+            <table className={cardStyles.adminTable}>
               <thead>
-                <tr style={{ backgroundColor: "rgba(13, 15, 38, 0.8)" }}>
-                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", borderBottom: "1px solid var(--main-color)", color: "var(--bg-color)" }}>Filename</th>
-                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", borderBottom: "1px solid var(--main-color)", color: "var(--bg-color)" }}>Class</th>
-                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", borderBottom: "1px solid var(--main-color)", color: "var(--bg-color)" }}>Subject</th>
-                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", borderBottom: "1px solid var(--main-color)", color: "var(--bg-color)" }}>Actions</th>
+                <tr>
+                  <th>Filename</th>
+                  <th>Class</th>
+                  <th>Subject</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {pdfs.map((pdf, index) => (
-                  <tr 
-                    key={pdf.id} 
-                    style={{ 
-                      backgroundColor: index % 2 === 0 ? "rgba(13, 15, 38, 0.4)" : "rgba(13, 15, 38, 0.5)",
-                      borderBottom: "1px solid rgba(100, 123, 255, 0.1)",
-                      transition: "background-color var(--transition-fast)"
-                    }}
-                  >
-                    <td style={{ padding: "0.75rem 1rem" }}>
+                  <tr key={pdf.id}>
+                    <td>
                       <a 
                         href={pdf.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        style={{
-                          color: "var(--main-color)",
-                          textDecoration: "none",
-                          fontWeight: "500",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "6px"
-                        }}
+                        className={cardStyles.fileLink}
                       >
-                        <span style={{ fontSize: "0.9rem" }}>📄</span> {pdf.filename}
+                        <span>📄</span> {pdf.filename}
                       </a>
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--bg-color)" }}>{pdf.class}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--bg-color)" }}>{pdf.subject}</td>
-                    <td style={{ padding: "0.75rem 1rem" }}>
+                    <td>{pdf.class}</td>
+                    <td>{pdf.subject}</td>
+                    <td>
                       <button
                         onClick={() => onDelete(pdf.id)}
-                        style={{
-                          padding: "0.4rem 1rem",
-                          background: "rgba(231, 76, 60, 0.9)",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          fontWeight: "500",
-                          transition: "all var(--transition-fast)",
-                          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)"
-                        }}
+                        className={cardStyles.deleteButton}
                       >
                         Delete
                       </button>
                     </td>
-                  </tr>
-                ))}
+                  </tr>                ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p style={{ 
-            color: "var(--bg-color)", 
-            fontStyle: "italic",
-            opacity: 0.7,
-            padding: "1rem",
-            background: "rgba(13, 15, 38, 0.4)",
-            borderRadius: "6px",
-            textAlign: "center" 
-          }}>
+          <p className={cardStyles.noContentMessage}>
             No PDFs uploaded yet.
           </p>
         )}

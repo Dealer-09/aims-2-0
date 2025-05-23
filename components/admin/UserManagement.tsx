@@ -1,4 +1,5 @@
 import styles from '../../styles/admin.module.css';
+import cardStyles from '../../styles/admin-card-fixes.module.css';
 
 type User = {
   id: string;
@@ -14,8 +15,7 @@ interface UserManagementProps {
   onRevokeAccess: (userId: string, email: string) => Promise<void>;
 }
 
-export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: UserManagementProps) {
-  return (
+export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: UserManagementProps) {  return (
     <section className={styles.adminSection}>
       <h2 className={styles.sectionTitle}>
         <span className={styles.sectionIconWrapper}>🔑</span>
@@ -39,19 +39,21 @@ export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: 
                 background: "rgba(13, 15, 38, 0.5)",
                 opacity: user.role === "revoked" ? 0.7 : 1,
                 boxShadow: "0 3px 10px rgba(0, 0, 0, 0.1)",
-                transition: "all var(--transition-fast)"
+                transition: "all var(--transition-fast)",
+                width: "100%", /* Ensure card takes full width */
+                overflowX: "hidden", /* Hide horizontal overflow */
+                overflowY: "visible" /* Allow vertical overflow */
               }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+            >              <div className={cardStyles.userCardContent}>
                 <div>
-                  <p style={{ 
+                  <p className={`${cardStyles.cardText}`} style={{ 
                     fontSize: "1.1rem", 
                     fontWeight: "600", 
-                    marginBottom: "0.5rem", 
-                    color: "var(--bg-color)",
+                    marginBottom: "0.5rem",
                     display: "flex",
                     alignItems: "center",
-                    gap: "8px"
+                    gap: "8px",
+                    flexWrap: "wrap"
                   }}>
                     <span style={{ color: "var(--main-color)" }}>📧</span>
                     {user.email}
@@ -84,11 +86,14 @@ export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: 
                   </p>
                   
                   {(user.class || user.subject) && (
-                    <p style={{ 
+                    <p className={cardStyles.cardText} style={{ 
                       color: "var(--bg-color)", 
                       opacity: 0.8, 
                       fontSize: "0.95rem",
-                      marginTop: "0.5rem" 
+                      marginTop: "0.5rem",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "0.5rem"
                     }}>
                       {user.class && (
                         <span style={{ 
@@ -115,69 +120,39 @@ export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: 
                   )}
                 </div>
                 
-                {/* Action buttons conditionally rendered based on role */}
-                {user.role !== "admin" && user.role !== "revoked" && (
-                  <div style={{ 
-                    display: "flex", 
-                    gap: "0.8rem",
-                    marginTop: "0.5rem",
+                {/* Action buttons conditionally rendered based on role */}                {user.role !== "admin" && user.role !== "revoked" && (
+                  <div className={cardStyles.cardActions} style={{ 
                     marginLeft: "auto"
                   }}>
                     <select
+                      className={cardStyles.cardFormGroup}
                       onChange={(e) => {
                         if (e.target.value !== user.class) {
                           onUpdateUser(user.id, { class: e.target.value });
                         }
                       }}
                       value={user.class || ""}
-                      style={{
-                        padding: "0.5rem 0.75rem",
-                        borderRadius: "6px",
-                        border: "1px solid rgba(100, 123, 255, 0.4)",
-                        background: "rgba(13, 15, 38, 0.6)",
-                        color: "var(--bg-color)",
-                        width: "130px"
-                      }}
                     >
                       <option value="" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Change Class</option>
                       <option value="Class 10" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Class 10</option>
                       <option value="Class 12" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Class 12</option>
                     </select>
-                    
-                    <select
+                      <select
+                      className={cardStyles.cardFormGroup}
                       onChange={(e) => {
                         if (e.target.value !== user.subject) {
                           onUpdateUser(user.id, { subject: e.target.value });
                         }
                       }}
                       value={user.subject || ""}
-                      style={{
-                        padding: "0.5rem 0.75rem",
-                        borderRadius: "6px",
-                        border: "1px solid rgba(100, 123, 255, 0.4)",
-                        background: "rgba(13, 15, 38, 0.6)",
-                        color: "var(--bg-color)",
-                        width: "130px"
-                      }}
                     >
                       <option value="" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Change Subject</option>
                       <option value="Math" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Math</option>
                       <option value="Physics" style={{ color: "#ddd", backgroundColor: "var(--box-color)" }}>Physics</option>
                     </select>
-                    
-                    <button
+                      <button
+                      className={cardStyles.cardButton}
                       onClick={() => onRevokeAccess(user.id, user.email)}
-                      style={{
-                        padding: "0.5rem 1rem",
-                        background: "rgba(231, 76, 60, 0.85)",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                        fontWeight: "500",
-                        transition: "all var(--transition-fast)",
-                        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)"
-                      }}
                     >
                       Revoke Access
                     </button>
@@ -186,17 +161,8 @@ export default function UserManagement({ users, onUpdateUser, onRevokeAccess }: 
               </div>
             </div>
           ))}
-        </div>
-      ) : (
-        <div style={{
-          padding: "1.5rem",
-          textAlign: "center",
-          color: "var(--bg-color)",
-          opacity: 0.7,
-          background: "rgba(13, 15, 38, 0.4)",
-          borderRadius: "8px",
-          border: "1px dashed rgba(100, 123, 255, 0.3)"
-        }}>
+        </div>      ) : (
+        <div className={cardStyles.noContentMessage}>
           <p>No users found.</p>
         </div>
       )}

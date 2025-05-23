@@ -5,7 +5,11 @@ const BackToTop: React.FC = () => {
 
   // Show button when page is scrolled down
   const toggleVisibility = () => {
-    if (window.pageYOffset > 300) {
+    // Get current scroll position with cross-browser support
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Only show button when scrolled more than 300px
+    if (scrollY > 300) {
       setVisible(true);
     } else {
       setVisible(false);
@@ -22,8 +26,25 @@ const BackToTop: React.FC = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
+    // Check scroll position on mount
+    toggleVisibility();
+    
+    // Add throttled event listener for better performance
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const throttledScroll = () => {
+      if (!timeoutId) {
+        timeoutId = setTimeout(() => {
+          toggleVisibility();
+          timeoutId = undefined as unknown as ReturnType<typeof setTimeout>;
+        }, 100);
+      }
+    };
+    
+    window.addEventListener("scroll", throttledScroll);
+    return () => {
+      window.removeEventListener("scroll", throttledScroll);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
