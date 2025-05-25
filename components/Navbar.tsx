@@ -1,118 +1,117 @@
-import React, { useState, useEffect, useCallback, CSSProperties } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 const Navbar: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scrolling effect with throttle for performance
+  // Handle scrolling effect
   const handleScroll = useCallback(() => {
-    if (window.scrollY > 50) {
-      if (!scrolled) setScrolled(true);
-    } else {
-      if (scrolled) setScrolled(false);
-    }
-  }, [scrolled]);
-  // Close menu when clicking outside
-  const handleClickOutside = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    // Improved check to ensure menu closes when clicking outside
-    if (menuOpen && !target.closest('.navbar') && !target.closest('.menu-icon') && !target.closest('header')) {
-      setMenuOpen(false);
-    }
-  }, [menuOpen]);
+    setScrolled(window.scrollY > 50);
+  }, []);
 
-  // Handle escape key press to close menu
+  // Close mobile menu when clicking outside or pressing escape
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+    document.body.classList.remove('mobile-menu-open');
+  }, []);
+
+  // Handle escape key
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape' && menuOpen) {
-      setMenuOpen(false);
+    if (e.key === 'Escape' && mobileMenuOpen) {
+      closeMobileMenu();
     }
-  }, [menuOpen]);
-  useEffect(() => {
-    // Add scroll listener with throttling
-    let timeoutId: NodeJS.Timeout;
-    const throttledScroll = () => {
-      if (!timeoutId) {
-        timeoutId = setTimeout(() => {
-          handleScroll();
-          timeoutId = undefined as unknown as NodeJS.Timeout;
-        }, 100);
-      }
-    };
+  }, [mobileMenuOpen, closeMobileMenu]);
 
-    window.addEventListener("scroll", throttledScroll);
-    document.addEventListener('click', handleClickOutside);
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
     document.addEventListener('keydown', handleKeyDown);
     
     return () => {
-      window.removeEventListener("scroll", throttledScroll);
-      document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
       document.removeEventListener('keydown', handleKeyDown);
-      clearTimeout(timeoutId);
-      
-      // Ensure menu-open class is removed when component unmounts
-      document.body.classList.remove('menu-open');
+      document.body.classList.remove('mobile-menu-open');
     };
-  }, [handleScroll, handleClickOutside, handleKeyDown]);
-  // Handle menu toggle
-  const toggleMenu = () => {
-    const newMenuState = !menuOpen;
-    setMenuOpen(newMenuState);
+  }, [handleScroll, handleKeyDown]);
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    const newState = !mobileMenuOpen;
+    setMobileMenuOpen(newState);
     
-    // Add or remove class on body for global styling when menu is open
-    if (newMenuState) {
-      document.body.classList.add('menu-open');
+    if (newState) {
+      document.body.classList.add('mobile-menu-open');
     } else {
-      document.body.classList.remove('menu-open');
+      document.body.classList.remove('mobile-menu-open');
     }
   };
 
-  // Close menu when a navigation link is clicked
-  const closeMenu = () => {
-    setMenuOpen(false);
-    document.body.classList.remove('menu-open');
-  };
+  // Handle navigation link click
+  const handleNavClick = () => {
+    closeMobileMenu();
+  };  return (
+    <>
+      <header className={scrolled ? "header-active" : ""} role="banner">
+        <div className="nav container">
+          {/* Logo */}
+          <Link href="#" className="logo" aria-label="AIMS Home">
+            AIMS
+          </Link>
 
-  const getNavLinkStyle = (index: number): CSSProperties => ({
-    ['--i' as string]: index
-  });
+          {/* Desktop Navigation */}
+          <nav role="navigation" aria-label="Main navigation">
+            <ul className="navbar">
+              <li><Link href="#home" className="nav-link">Home</Link></li>
+              <li><Link href="#about" className="nav-link">About</Link></li>
+              <li><Link href="#location" className="nav-link">Location</Link></li>
+              <li><Link href="#class" className="nav-link">Class</Link></li>
+              <li><Link href="#contact" className="nav-link">Contact</Link></li>
+              <li>
+                <Link href="/sign-in" className="nav-link sign-in">
+                  <i className='bx bx-log-in-circle'></i> Sign In
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
-  return (
-    <header className={scrolled ? "header-active" : ""} role="banner">
-      <div className="nav container">
-        {/* Logo */}
-        <Link href="#" className="logo" aria-label="AIMS Home">AIMS</Link>
-
-        {/* Navigation Bar */}        <nav role="navigation" aria-label="Main navigation">
-          <ul className={`navbar ${menuOpen ? "open-menu" : ""}`} id="navbar">
-            <li><Link href="#home" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(0)}>Home</Link></li>
-            <li><Link href="#about" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(1)}>About</Link></li>
-            <li><Link href="#location" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(2)}>Location</Link></li>
-            <li><Link href="#class" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(3)}>Class</Link></li>
-            <li><Link href="#contact" className="nav-link" onClick={closeMenu} style={getNavLinkStyle(4)}>Contact</Link></li>
-            <li>
-              <Link href="/sign-in" className="nav-link sign-in" onClick={closeMenu} style={getNavLinkStyle(5)}>
-                <i className='bx bx-log-in-circle'></i> Sign In
-              </Link>
-            </li>
-          </ul>
+          {/* Mobile Menu Button */}
+          <button 
+            className={`mobile-menu-btn ${mobileMenuOpen ? "active" : ""}`}
+            onClick={toggleMobileMenu}
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </header>      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${mobileMenuOpen ? "active" : ""}`}>
+        <nav className="mobile-nav" role="navigation" aria-label="Mobile navigation">
+          <Link href="#home" className="mobile-nav-link" onClick={handleNavClick}>
+            Home
+          </Link>
+          <Link href="#about" className="mobile-nav-link" onClick={handleNavClick}>
+            About
+          </Link>
+          <Link href="#location" className="mobile-nav-link" onClick={handleNavClick}>
+            Location
+          </Link>
+          <Link href="#class" className="mobile-nav-link" onClick={handleNavClick}>
+            Class
+          </Link>
+          <Link href="#contact" className="mobile-nav-link" onClick={handleNavClick}>
+            Contact
+          </Link>
+          <Link href="/sign-in" className="mobile-nav-link sign-in" onClick={handleNavClick}>
+            <i className='bx bx-log-in-circle'></i> Sign In
+          </Link>
         </nav>
-
-        {/* Menu Icon - with proper ARIA attributes */}        <button 
-          className={`menu-icon ${menuOpen ? "move" : ""}`} 
-          onClick={toggleMenu}
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-controls="navbar"
-        >
-          <div className="line1"></div>
-          <div className="line2"></div>
-          <div className="line3"></div>        </button>
       </div>
-      {/* Overlay removed for better mobile interaction */}
-        <style jsx>{`
-        /* Menu overlay has been completely removed */
-        
+
+      {/* Styles */}
+      <style jsx>{`
         .sign-in {
           display: flex;
           align-items: center;
@@ -129,41 +128,16 @@ const Navbar: React.FC = () => {
           background-color: #546eff !important;
           transform: translateY(-2px);
         }
-          @media (max-width: 775px) {
+        
+        @media (max-width: 768px) {
           .sign-in {
-            margin: 1rem 0 0 0;
-            width: 100%;
+            margin: 0;
+            width: auto;
             justify-content: center;
-          }          /* Make links explicitly clickable on mobile */
-          .navbar li {
-            width: 100%;
-            position: relative;
-            z-index: 1002; /* Ensure links are above overlay */
-            margin-bottom: 8px; /* Add space between items */
-            transform: translateZ(0); /* Create a new stacking context */
-            pointer-events: auto !important; /* Force pointer events to work */
-          }
-          
-          .nav-link {
-            display: block !important;
-            width: 100%;
-            position: relative;
-            z-index: 1005; /* Higher z-index than overlay */
-            pointer-events: auto !important;
-            cursor: pointer !important;
-            transition: background-color 0.3s;
-            padding: 12px !important; /* Increase touch target size */
-            -webkit-tap-highlight-color: rgba(100, 123, 255, 0.2); /* Better visual feedback on iOS */
-          }
-          
-          /* Add touchable feedback for mobile */
-          .nav-link:active {
-            background-color: rgba(100, 123, 255, 0.3) !important;
-            transform: scale(0.98); /* Subtle press effect */
           }
         }
       `}</style>
-    </header>
+    </>
   );
 };
 

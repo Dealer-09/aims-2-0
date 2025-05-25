@@ -21,38 +21,51 @@ const HeroSection: React.FC = () => {
         (children[i] as HTMLElement).style.animationDelay = `${i * 0.15}s`;
       }
     }
-  }, []);
-
-  return (
-    <section className="home container" id="home">
-      <div className="home-content">
-        <div className="home-img" ref={imgRef}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src="/img/IMG-20250226-WA0038.jpg" 
-            alt="Professor Amit Tiwari" 
-            loading="eager" 
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center',
-              borderRadius: '50%',
-              border: '3px solid var(--main-color)',
-              boxShadow: '0 8px 25px rgba(100, 123, 255, 0.3)'
-            }}
-          />
+  }, []);  return (
+    <section className="hero-section" id="home">
+      <div className="hero-content">
+        <div className="hero-badge" ref={imgRef}>
+          <div className="institute-logo">
+            <i className='bx bxs-graduation'></i>
+          </div>
         </div>
-        <div className="home-text" ref={textRef}>
-          <h3>HELLO</h3>
-          <h2 id="main-content">
-            I&apos;m <span className="color">Amit Tiwari</span>
+        <div className="hero-text" ref={textRef}>
+          <h3>WELCOME TO</h3>
+          <h1 id="main-content">
+            <span className="color">AIMS</span>
+          </h1>
+          <h2 className="institute-name">
+            Amit Institute of <span className="color">Math&apos;s & Science</span>
           </h2>
-          <p>
-            <span className="color">&quot;Welcome to my science institute!&quot;</span> As a passionate educator in the realms of science and mathematics,
-            <span className="color"> I am thrilled to extend my knowledge and expertise to eager minds like yours.</span>
-            <br /> Through my website, I aim to provide engaging resources, insightful content,
-            <span className="color"> and a glimpse into the exciting world of scientific discovery.</span>
+          <p className="hero-description">
+            <span className="color">Excellence in Education</span> - Where passion meets learning.
+            We provide comprehensive science and mathematics education that empowers students to achieve their academic goals
+            <span className="color"> and unlock their full potential.</span>
           </p>
-          <div className="social">
+          <div className="hero-stats">
+            <div className="stat-item">
+              <div className="stat-number">5+</div>
+              <div className="stat-label">Locations</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">500+</div>
+              <div className="stat-label">Students</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">100%</div>
+              <div className="stat-label">Success Rate</div>
+            </div>
+          </div>
+          <div className="hero-actions">
+            <a href="#classes" className="cta-primary">
+              Explore Courses <i className='bx bx-right-arrow-alt'></i>
+            </a>
+            <a href="#contact" className="cta-secondary">
+              Get Started <i className='bx bx-phone'></i>
+            </a>
+          </div>
+          <div className="social-links">
+            <span className="social-label">Follow Us:</span>
             <a 
               href="https://www.facebook.com/people/Amit-Institute-of-Maths-Science/61559417496300/?mibextid=ZbWKwL" 
               target="_blank" 

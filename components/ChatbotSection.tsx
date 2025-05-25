@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./Chatbot.module.css"; // ✅ Import Next.js CSS Module
+import styles from "../styles/Chatbot.module.css"; // ✅ Import Next.js CSS Module
 
 const ChatbotSection: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

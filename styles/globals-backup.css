@@ -161,7 +161,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1010; /* Lower than banner */
+  z-index: 1020;
   background: #090a1a !important; /* Completely solid background */
   border-bottom: 1px solid #647bff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -888,7 +888,7 @@ body.banner-visible .hero-section {
   background: linear-gradient(135deg, var(--main-color) 0%, #546eff 100%);
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1020; /* Above header (1010) but below mobile menu (1100) */
+  z-index: 999; /* Below mobile menu (1000+) but above content */
   animation: slideDown 0.5s ease-out;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);

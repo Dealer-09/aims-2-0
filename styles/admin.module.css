@@ -10,16 +10,7 @@
 }
 
 /*     Animations       */
-@keyframes backgroundGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
 
-@keyframes glassShineCycle {
-  0% { transform: translateX(-100%); }
-  20%, 100% { transform: translateX(100%); }
-}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -45,9 +36,8 @@
 
 /* Main Layout Container */
 .adminLayout {
-  padding: 1rem 1rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 1rem 2rem 2rem;
+  width: 100%;
   background: var(--body-color);
   background-image: 
     radial-gradient(rgba(100, 123, 255, 0.1) 1px, transparent 1px),
@@ -79,10 +69,8 @@
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05);
   font-weight: 600;
-  letter-spacing: 1px;
-  position: relative;
+  letter-spacing: 1px;  position: relative;
   overflow: hidden;
-  animation: backgroundGradient 15s ease infinite;
   flex: 1;
   font-size: 1.25rem;
 }
@@ -321,10 +309,8 @@
   top: 0;
   left: -50%;
   width: 200%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  height: 100%;  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
   transform: translateX(-100%);
-  animation: glassShineCycle 8s linear infinite;
   pointer-events: none;
 }
 
@@ -652,23 +638,7 @@
   border: 1px solid rgba(100, 123, 255, 0.4);
 }
 
-.badgeSuccess {
-  background: rgba(76, 175, 80, 0.2);
-  color: #4caf50;
-  border: 1px solid rgba(76, 175, 80, 0.4);
-}
 
-.badgeWarning {
-  background: rgba(255, 193, 7, 0.2);
-  color: #ffc107;
-  border: 1px solid rgba(255, 193, 7, 0.4);
-}
-
-.badgeDanger {
-  background: rgba(255, 82, 82, 0.2);
-  color: #ff5252;
-  border: 1px solid rgba(255, 82, 82, 0.4);
-}
 
 /* ====================== */
 /*     Tooltip Styles     */
@@ -739,7 +709,7 @@
 /* Medium screens (768px and above) */
 @media (min-width: 768px) {
   .adminLayout {
-    padding: 1rem 2rem 2rem;
+    padding: 1rem 3rem 2rem;
   }
   
   .dashboardTitle {
@@ -756,8 +726,19 @@
   }
 }
 
+/* Large screens - add more padding but keep full width */
+@media (min-width: 1400px) {
+  .adminLayout {
+    padding: 1rem 5rem 2rem;
+  }
+}
+
 /* Medium screens (768px and below) */
 @media (max-width: 768px) {
+  .adminLayout {
+    padding: 1rem 1.5rem 2rem;
+  }
+
   .navigationContainer {
     position: fixed;
     top: 0;
@@ -931,6 +912,10 @@
 
 /* Small screens (480px and below) */
 @media (max-width: 480px) {
+  .adminLayout {
+    padding: 1rem 1rem 2rem;
+  }
+
   .componentContainer {
     margin-top: 0.25rem;
   }
@@ -990,56 +975,10 @@
     flex-wrap: wrap;
     word-break: break-word;
   }
-  
-  .table th, 
+    .table th, 
   .table td {
     padding: 0.5rem;
     font-size: 0.9rem;
-  }
-  
-  .responsiveTable {
-    display: block;
-  }
-  
-  .responsiveTable thead {
-    display: none;
-  }
-  
-  .responsiveTable tbody, 
-  .responsiveTable tr, 
-  .responsiveTable td {
-    display: block;
-    width: 100%;
-    text-align: left;
-  }
-  
-  .responsiveTable tr {
-    margin-bottom: 1rem;
-    border: 1px solid rgba(100, 123, 255, 0.2);
-    border-radius: 8px;
-    padding: 0.5rem;
-  }
-  
-  .responsiveTable td {
-    position: relative;
-    padding-left: 40%;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-  
-  .responsiveTable td:last-child {
-    border-bottom: none;
-  }
-  
-  .responsiveTable td::before {
-    content: attr(data-label);
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    width: 35%;
-    font-weight: 600;
-    color: var(--main-color);
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   
   .card {
@@ -1077,29 +1016,11 @@
     top: 125%;
     font-size: 0.75rem;
   }
-  
-  .tooltipMobile .tooltipText {
-    display: none;
-  }
-  
-  .tooltipMobile.active .tooltipText {
-    display: block;
-    visibility: visible;
-    opacity: 1;
-  }
-  
-  .loader {
+    .loader {
     width: 30px;
     height: 30px;
     border-width: 2px;
     margin-right: 0.3rem;
-  }
-  
-  .loaderContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100px;
   }
   
   .loader::after {

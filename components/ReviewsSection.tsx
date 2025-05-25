@@ -7,7 +7,7 @@ import { Pagination } from "swiper/modules"; // ✅ Import Swiper modules
 
 const ReviewsSection: React.FC = () => {
   return (
-    <section className="reviews container" id="reviews">
+    <section className="reviews" id="reviews">
       <h2 className="heading">Reviews</h2>
 
       <Swiper

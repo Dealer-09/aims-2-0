@@ -8,7 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
-
   // Authenticate the request with Clerk
   const { userId, sessionId } = getAuth(req);
   if (!userId || !sessionId) {
@@ -19,14 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!userEmail) {
       return res.status(400).json({ error: "Email is required" });
     }
-
     // Normalize the email to ensure consistent lookup
     if (!isValidEmail(userEmail)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
-    
-    const normalizedEmail = normalizeEmail(userEmail);
-
+      const normalizedEmail = normalizeEmail(userEmail);
     // Get Admin SDK instance
     const { adminDb, error: adminInitError } = getAdminDb();
     

@@ -1,0 +1,173 @@
+/* CSS for improved UserManagement component structure */
+.userCard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.userCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.userEmail {
+  max-width: 70%;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userBadge {
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: flex-start;
+  min-width: 65px;
+  text-align: center;
+}
+
+.userDetails {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.userControls {
+  display: grid;
+  grid-template-columns: repeat(3, 140px);
+  gap: 0.8rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 990px) and (min-width: 769px) {
+  .userCardHeader {
+    margin-bottom: 0.25rem;
+  }
+  
+  .userEmail {
+    max-width: 60%;
+  }
+  
+  .userControls {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .userCardHeader {
+    flex-direction: column;
+  }
+  
+  .userEmail {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .userBadge {
+    margin-left: 0;
+    align-self: flex-start;
+  }
+  
+  .userControls {
+    width: 100%;
+    justify-content: flex-start;
+    grid-template-columns: repeat(auto-fill, 140px);
+  }
+}
+
+/* Fixed width for controls to ensure uniformity */
+.controlItem {
+  width: 140px;
+  height: 2.2rem;
+  flex-shrink: 0;
+}
+
+.controlButton {
+  width: 140px;
+  height: 2.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Additional responsive adjustments for very small screens */
+@media (max-width: 480px) {
+  .userControls {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+  
+  .controlItem, 
+  .controlButton {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+  
+  /* Special case for single button row */
+  .userControls:has(.controlButton:only-child) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Utility class for text truncation - can be reused across components */
+.truncateText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Additional hover effects for controls */
+.controlItem:hover,
+.controlButton:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Improved focus styles for accessibility */
+.controlItem:focus,
+.controlButton:focus {
+  outline: 2px solid var(--main-color);
+  outline-offset: 2px;
+}
+
+/* Additional medium screen breakpoint adjustment */
+@media (max-width: 1100px) and (min-width: 991px) {
+  .userEmail {
+    max-width: 65%;
+  }
+}
+
+/* Print styles */
+@media print {
+  .userControls {
+    display: none;
+  }
+  
+  .userCard {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Animation for UI enhancement */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}

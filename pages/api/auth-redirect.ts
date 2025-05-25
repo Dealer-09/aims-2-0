@@ -5,16 +5,13 @@ import { getAdminDb } from "../../utils/firebaseAdmin";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { userId } = getAuth(req);
-    
     // If no user is authenticated, redirect to sign-in
     if (!userId) {
       console.log("No authenticated user found, redirecting to sign-in");
       return res.redirect(307, "/sign-in");
     }
-    
     // Try to get user email from Clerk session (via header)
     let userEmail = req.headers['x-clerk-user-email'] as string;
-    
     // When making the Clerk API call, make sure it's using CLERK_SECRET_KEY
     if (!userEmail && process.env.CLERK_SECRET_KEY) {
       try {

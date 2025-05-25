@@ -45,41 +45,21 @@ const BackToTop: React.FC = () => {
       window.removeEventListener("scroll", throttledScroll);
       clearTimeout(timeoutId);
     };
-  }, []);
-
-  return (
-    <div className={`scroll-top ${visible ? 'scroll-active' : ''}`}>
-      <button 
-        onClick={scrollToTop}
-        aria-label="Back to top"
-        title="Back to top"
-        className="back-to-top-button"
-      >
-        <i className='bx bx-up-arrow-alt'></i>
-      </button>
-      
-      <style jsx>{`
-        .back-to-top-button {
-          width: 45px;
-          height: 45px;
-          background: var(--main-color);
-          color: #fff;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s;
+  }, []);  return (
+    <div 
+      className={`scroll-top ${visible ? 'scroll-active' : ''}`}
+      onClick={scrollToTop}
+      aria-label="Back to top"
+      title="Back to top"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          scrollToTop();
         }
-        
-        .back-to-top-button:hover {
-          background: #546eff;
-          transform: translateY(-3px);
-        }
-      `}</style>
+      }}
+    >
+      <i className='bx bx-up-arrow-alt'></i>
     </div>
   );
 };

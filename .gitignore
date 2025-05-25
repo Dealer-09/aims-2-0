@@ -1,76 +1,51 @@
+# ==========================================
+# CRITICAL SECURITY - Environment Variables
+# ==========================================
+# Environment files containing API keys, secrets, and credentials
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.*.local
+
+# Firebase service account keys and admin credentials
+firebase-adminsdk-*.json
+serviceAccountKey.json
+firebase-credentials.json
+*firebase*admin*.json
+
+# ==========================================
+# AUTHENTICATION & API SECRETS
+# ==========================================
+# Clerk authentication secrets
+clerk-secret-*
+*clerk*secret*
+
+# Resend email API keys
+resend-api-*
+*resend*key*
+
+# hCaptcha secrets
+hcaptcha-secret-*
+*hcaptcha*secret*
+
+# MongoDB connection strings and credentials
+mongodb-credentials.json
+mongo-*.key
+*mongodb*credentials*
+
+# ==========================================
+# NODE.JS & PACKAGE MANAGEMENT
+# ==========================================
 # Node dependencies
 node_modules/
-
-# Next.js build output
-.next/
-out/
-build/
-
-# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Editor directories and files
-.vscode/
-*.sublime-workspace
-*.sublime-project
-*.code-workspace
-
-# Environment variables - protect sensitive information
-.env
-.env.*
-.env.local
-.env.development
-.env.test
-.env.production
-!.env.example
-
-# Firebase
-**/firebase-adminsdk-*.json
-**/serviceAccount*.json
-**/firebase-key*.json
-**/firebase-credentials*.json
-**/firebase-service-account*.json
-**/google-services.json
-setup-firebase-admin.ps1
-
-# Authentication
-**/clerk-secret*.json
-
-# Email Credentials
-**/email-credentials*.json
-**/resend-api-key*.txt
-
-# MongoDB
-**/mongodb*.json
-**/mongodb-uri*.txt
-
-# Misc
-*.pem
-*.tsbuildinfo
-next-env.d.ts
-*.key
-*.cert
-*.p8
-*.p12
-*.crt
-*.jks
-*.keystore
-
-# Local SSL certificates
-**/localhost*.pem
-
-# Vercel
-.vercel/
-
-# Test coverage
-coverage/
+lerna-debug.log*
 
 # Yarn
 .pnp
@@ -81,66 +56,205 @@ coverage/
 !.yarn/releases
 !.yarn/versions
 
-# Mac system files
-.DS_Store
+# Package-lock files for libraries
+package-lock.json
+yarn.lock
 
-# Windows system files
-Thumbs.db
+# ==========================================
+# NEXT.JS BUILD & DEPLOYMENT
+# ==========================================
+# Next.js build output
+.next/
+out/
+build/
+dist/
 
-# Ignore build artifacts in all subfolders
+# Production build files
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel deployment
+.vercel/
+.vercel
+
+# Build artifacts in all subfolders
 **/.next/
 **/out/
 **/build/
+**/dist/
+
+# ==========================================
+# DEVELOPMENT & TESTING
+# ==========================================
+# Test coverage reports
+coverage/
 **/coverage/
+.nyc_output
+*.lcov
 
-# MongoDB
-**/mongodb-key*.json
-**/mongodb-credentials*.json
-**/mongodb-uri*.txt
-**/mongodb-config*.json
+# Jest
+jest.config.js
+coverage.json
 
-# Sensitive files that might contain tokens, passwords, etc.
-**/*secret*.json
-**/*token*.json
-**/*password*.txt
-**/*credential*.json
-**/*credential*.js
-**/*credential*.ts
-**/*key*.json
-**/*auth*.json
-**/auth-config*.js
-**/auth-config*.ts
+# Testing artifacts
+cypress/videos/
+cypress/screenshots/
+test-results/
+playwright-report/
 
-# API Keys
-**/resend-*.txt
-**/resend-*.json
-**/hcaptcha-*.txt
-**/hcaptcha-*.json
-**/clerk-*.json
-
-# Local development files
-**/*.local.js
-**/*.local.ts
-**/*.local.json
-**/local.settings.json
-
-# Backup files
-**/*.bak
-**/*backup*
-**/*.backup
-
-# Logs
+# ==========================================
+# LOGGING & MONITORING
+# ==========================================
+# Log files
+*.log
+logs/
 **/logs/
-**/*.log
 
-# Test data
-**/test-data/
-**/mock-data/
+# Runtime logs
+*.pid
+*.seed
+*.pid.lock
 
-# If using Firebase emulator, ignore its data
-**/firebase-debug.log
-**/.emulator*
-**/emulator*
-**/firebase-export*
-**/ui-debug.log
+# ==========================================
+# ADMIN & CONFIGURATION
+# ==========================================
+# Admin configuration files
+admin-config.json
+admin-credentials.json
+pages/api/admin/secrets.json
+pages/api/admin/config.json
+
+# Development configuration
+config/local.json
+config/development.json
+config/production.json
+
+# ==========================================
+# SECURITY & CERTIFICATES
+# ==========================================
+# SSL certificates and private keys
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ssh
+
+# ==========================================
+# EDITOR & IDE
+# ==========================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Other editors
+.project
+.classpath
+.settings/
+
+# ==========================================
+# OPERATING SYSTEM
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ==========================================
+# TEMPORARY & CACHE FILES
+# ==========================================
+# Temporary folders
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+
+# ==========================================
+# DATABASE & STORAGE
+# ==========================================
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Database dumps
+*.sql
+*.dump
+
+# ==========================================
+# BACKUP & SENSITIVE DATA
+# ==========================================
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+
+# User data that might contain PII
+user-data/
+uploads/
+files/
+documents/
+
+# ==========================================
+# DEVELOPMENT TOOLS
+# ==========================================
+# Storybook
+storybook-static/
+
+# Bundle analysis
+.bundle-analyzer/
+bundle-stats.json
+
+# ==========================================
+# ADDITIONAL SECURITY PATTERNS
+# ==========================================
+# Any file containing "secret", "key", "password", "token"
+*secret*
+*password*
+*credential*
+*token*
+*private*
+
+# Configuration files that might contain sensitive data
+.config
+*.config.local
+*local.config*
+
+# Documentation that might contain sensitive setup info
+SETUP_SECRETS.md
+DEPLOYMENT_KEYS.md
 
