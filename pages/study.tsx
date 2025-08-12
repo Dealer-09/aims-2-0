@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useUser } from "@clerk/nextjs";
-import { db, collection, getDocs, query, where } from "../utils/firebase";
 import styles from "../styles/study.module.css";
+
+interface PdfData {
+  url: string;
+  filename: string;
+}
 
 export default function StudyPage() {
   const { isSignedIn, user, isLoaded } = useUser();
   const router = useRouter();
   const [approved, setApproved] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [pdfs, setPdfs] = useState<Array<{ url: string; filename: string }>>([]);
+  const [pdfs, setPdfs] = useState<PdfData[]>([]);
   const [pdfsLoading, setPdfsLoading] = useState(false);
   const [pdfsError, setPdfsError] = useState("");
   const [userClass, setUserClass] = useState<string | null>(null);
@@ -27,7 +31,7 @@ export default function StudyPage() {
       }
     }
   }, [isLoaded, isSignedIn, user, router]);
-    // Check approval and get user class/subject
+  
   const checkApprovalAndFetchUser = async (email: string | undefined, userId: string | undefined) => {
     if (!email || !userId) return;
     try {
@@ -43,7 +47,7 @@ export default function StudyPage() {
             } else {
               setError('Failed to check approval status. Please try again later.');
             }
-          } catch (jsonError) {
+          } catch {
             setError(`Server error (${res.status}). Please try again later.`);
           }
         } else {
@@ -60,11 +64,9 @@ export default function StudyPage() {
       }
       
       if (data.approved) {
-        // Fetch user class/subject from Firestore
         try {
           const userDocRes = await fetch(`/api/get-user-role?email=${email}`, {
             method: "GET",
-            // Clerk will automatically add the auth header
           });
           
           if (!userDocRes.ok) {
@@ -77,12 +79,10 @@ export default function StudyPage() {
           setUserSubject(userDoc.subject || null);
         } catch (roleError) {
           console.error('Error fetching user role:', roleError);
-          // Continue with default null values for class/subject
         }
       }
     } catch (error) {
       console.error('Error in approval check:', error);
-      // Show appropriate user message for errors
       setApproved(false);
     } finally {
       setLoading(false);
@@ -94,19 +94,15 @@ export default function StudyPage() {
     setPdfsError("");
     (async () => {
       try {
-        console.log(`Fetching PDFs for class: ${userClass}, subject: ${userSubject}`);
         
-        // Call our API endpoint that handles MongoDB PDF fetching
         const response = await fetch('/api/pdfs/get-student-pdfs');
         
         if (!response.ok) {
-          // Try to get more detailed error information
           let errorDetail = "";
           try {
             const errorData = await response.json();
             errorDetail = errorData.error || errorData.details || "";
-          } catch (jsonError) {
-            // If we can't parse JSON, just use the status text
+          } catch {
             errorDetail = response.statusText;
           }
           
@@ -120,10 +116,8 @@ export default function StudyPage() {
           throw new Error("Server returned invalid data format");
         }
         
-        console.log(`Successfully fetched ${data.pdfs.length} PDFs`);
-        
         setPdfs(
-          data.pdfs.map((pdf: any) => {
+          data.pdfs.map((pdf: { url: string; filename: string }) => {
             return {
               url: pdf.url,
               filename: pdf.filename,
@@ -145,7 +139,7 @@ export default function StudyPage() {
       </div>
     );
   }
-    // Show error if there's a server configuration issue
+
   if (error) {
     return (
       <div className={styles.errorContainer}>
@@ -355,7 +349,7 @@ export default function StudyPage() {
                     </svg>
                   </div>
                   <h3>No Study Materials Yet</h3>
-                  <p>Materials for your class will appear here once they're available.</p>
+                  <p>Materials for your class will appear here once they&apos;re available.</p>
                 </div>
               )}
             </div>

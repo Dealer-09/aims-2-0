@@ -1,6 +1,5 @@
 import React, { useState, Children, isValidElement, useEffect } from 'react';
 import styles from '../../styles/admin.module.css';
-import cardStyles from '../../styles/admin-card-fixes.module.css';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -13,24 +12,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const childrenArray = Children.toArray(children).filter(isValidElement);
   const componentTitles = ["PDF Management", "Access Requests", "User Management"];
   const componentIcons = ["📄", "👥", "🔑"];
-  // Handle responsive behavior
+
   useEffect(() => {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     
-    // Initial check
     checkIfMobile();
     
-    // Add event listener for window resize
     window.addEventListener('resize', checkIfMobile);
     
-    // When switching from mobile to desktop, auto-close the mobile nav
     if (!isMobile && isNavOpen) {
       setIsNavOpen(false);
     }
     
-    // Close nav when clicking outside on mobile - improved to handle event bubbling
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (isMobile && isNavOpen && 

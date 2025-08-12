@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 const AnnouncementBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
 
-  // Add/remove banner-visible class to body
   useEffect(() => {
     if (isVisible) {
       document.body.classList.add('banner-visible');
@@ -11,7 +10,6 @@ const AnnouncementBanner: React.FC = () => {
       document.body.classList.remove('banner-visible');
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.classList.remove('banner-visible');
     };

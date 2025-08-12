@@ -43,7 +43,7 @@ export async function sendEmail(
     throw new Error('Email content is required');
   }
   try {
-    const defaultFrom = process.env.RESEND_FROM_EMAIL || "no-reply@aims-education.com";
+    const defaultFrom = process.env.RESEND_FROM_EMAIL || "no-reply@yourdomain.com";
 
     if (!resend) {
       throw new Error("Email service not initialized - missing API key");

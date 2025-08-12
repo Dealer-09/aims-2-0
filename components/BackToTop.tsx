@@ -3,12 +3,9 @@ import { useState, useEffect } from 'react';
 const BackToTop: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
-  // Show button when page is scrolled down
   const toggleVisibility = () => {
-    // Get current scroll position with cross-browser support
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
     
-    // Only show button when scrolled more than 300px
     if (scrollY > 300) {
       setVisible(true);
     } else {
@@ -16,8 +13,6 @@ const BackToTop: React.FC = () => {
     }
   };
 
-  // Set the top coordinate to 0
-  // Make scrolling smooth
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -26,10 +21,8 @@ const BackToTop: React.FC = () => {
   };
 
   useEffect(() => {
-    // Check scroll position on mount
     toggleVisibility();
     
-    // Add throttled event listener for better performance
     let timeoutId: ReturnType<typeof setTimeout>;
     const throttledScroll = () => {
       if (!timeoutId) {

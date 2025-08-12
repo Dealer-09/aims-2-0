@@ -24,7 +24,6 @@ export default function PdfManagement({ pdfs, onUpload, onDelete }: PdfManagemen
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
 
-  // Handle PDF upload
   const handlePdfUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploadError("");
@@ -125,7 +124,7 @@ export default function PdfManagement({ pdfs, onUpload, onDelete }: PdfManagemen
                 </tr>
               </thead>
               <tbody>
-                {pdfs.map((pdf, index) => (
+                {pdfs.map((pdf) => (
                   <tr key={pdf.id}>
                     <td>
                       <a 

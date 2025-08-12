@@ -1,6 +1,6 @@
 # 🎓 AIMS 2.0 – Academic Information Management System
 
-AIMS 2.0 is a modern educational platform designed for managing academic materials, user access, and class assignments. Built with **Next.js**, **Clerk**, **Firebase**, **MongoDB**, and **Resend**, it provides secure and efficient access to course documents for students, teachers, and administrators.
+A modern educational platform built with Next.js for managing academic materials, user access control, and document distribution. Features role-based authentication, admin dashboard, and secure document streaming.
 
 ![AIMS Platform](public/img/academic.png)
 
@@ -8,324 +8,183 @@ AIMS 2.0 is a modern educational platform designed for managing academic materia
 
 ## 🚀 Features
 
-- **User Access Management:** Role-based access (admin, teacher, student) with request/approval system  
-- **Admin Dashboard:** Manage user roles, upload PDFs, and assign materials by class/subject  
-- **Student Dashboard:** Access course documents filtered by class and subject  
-- **Security:** CAPTCHA, rate limiting, access control, JWT authentication, email alerts  
-- **Document Management:** Efficient upload, retrieval, and rendering using MongoDB GridFS  
+- **🔐 Role-Based Access Control:** Admin, teacher, and student roles with approval workflow
+- **📊 Admin Dashboard:** User management, PDF upload, and access request handling  
+- **📚 Student Portal:** Filtered document access by class and subject
+- **🛡️ Security:** CAPTCHA protection, rate limiting, JWT authentication
+- **📄 Document Management:** Secure PDF storage and streaming via MongoDB GridFS
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer              | Technology                               |
-|--------------------|------------------------------------------|
-| **Frontend**       | Next.js, React, TypeScript, Tailwind CSS |
-| **Authentication** | Clerk + Firebase Authentication          |
-| **Database**       | MongoDB (with GridFS), Firebase Firestore|
-| **Storage**        | Firebase Storage, MongoDB GridFS         |
-| **Backend**        | Next.js API Routes, Firebase Admin SDK   |
-| **Email**          | Resend API                               |
-| **Hosting**        | Vercel, MongoDB Atlas                    |
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | Next.js, React, TypeScript, Tailwind CSS |
+| **Authentication** | Clerk + Firebase Auth |
+| **Database** | MongoDB Atlas, Firebase Firestore |
+| **Storage** | MongoDB GridFS, Firebase Storage |
+| **Email** | Resend API |
+| **Hosting** | Vercel |
 
 ---
 
-## 🧭 Application Flow & User Journey
+## 🚀 Quick Start
 
-### 🎯 Core User Paths
+### Prerequisites
 
-1. **New User Journey:**
-   - Discovers AIMS through landing page (`/`)
-   - Clicks "Request Access" → `/request-access`
-   - Completes form with email + CAPTCHA verification
-   - System sends email notification to admin
-   - Waits for admin approval via admin dashboard
+- Node.js 18+ 
+- MongoDB Atlas account
+- Firebase project
+- Clerk account
+- Resend account (for emails)
+- hCaptcha account
 
-2. **Admin Workflow:**
-   - Signs in → Auto-redirected to `/admin` dashboard
-   - Reviews pending requests in "Access Requests" tab
-   - Approves users and assigns class/subject combinations
-   - Uploads PDFs via "PDF Management" with class/subject metadata
-   - Manages existing users via "User Management" tab
+### Installation
 
-3. **Student Learning Path:**
-   - Signs in → Auto-redirected to `/study` dashboard  
-   - Views personalized document library filtered by their class/subject
-   - Accesses PDFs directly in browser via MongoDB GridFS streaming
-   - Studies materials assigned by admin
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/aims-2-0.git
+   cd aims-2-0
+   ```
 
-### 🔐 Role-Based Access Control
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-| Role | Access Level | Available Routes | Permissions |
-|------|-------------|------------------|-------------|
-| **Admin** | Full Platform | `/admin`, `/study`, all API routes | User management, PDF upload, approve requests |
-| **Student** | Study Materials | `/study`, student API routes | View assigned PDFs, download materials |
-| **Unapproved** | Limited | `/`, `/request-access`, `/sign-in` | Submit access requests only |
-| **Revoked** | Blocked | Public pages only | Must re-request access |
+3. **Environment setup**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in your actual credentials in `.env.local`
 
-### 🌊 Navigation States
+4. **Run development server**
+   ```bash
+   npm run dev
+   ```
 
-**Public Navigation (Unauthenticated):**
-- Landing page with course information and testimonials
-- Sign In button in navbar → `/sign-in`
-- Request Access flow → `/request-access`
-
-**Authenticated Navigation:**
-- **Admin:** Persistent sidebar with tabs (PDF Management, Access Requests, User Management)
-- **Student:** Study dashboard with document library and filters
-- **Both:** Logout functionality via Clerk UserButton component
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ---
 
-## 🔐 Security Overview
+## 📁 Project Structure
 
-- **Authentication:** Firebase Auth + Clerk, JWT sessions, CAPTCHA protection  
-- **Role-based Access:** Distinct access for admins, teachers, and students  
-- **Secure Document Streaming:** GridFS streaming with access control  
-- **API Protections:** Input validation, method filtering, error shielding  
-
----
-
-## 🗃️ System Architecture
-
-### 🔑 Authentication & User Management
-- **Firebase Authentication + Clerk:** User registration, login, and session handling
-- **Role Assignment:** Managed via Firestore and Firebase Admin SDK
-
-### 📄 Document Management
-- **MongoDB + GridFS:** Secure, scalable file storage with metadata for class/subject association
-- **In-browser PDF Viewing:** Via `pdf.js` for seamless access
-
-### 🧭 User Navigation Flow
-
-```mermaid
-graph TD
-    Start([User Visits Platform]) --> Landing{Landing Page}
-    Landing --> |"New User"| RequestAccess[Request Access Form]
-    Landing --> |"Existing User"| SignIn[Sign In Page]
-    
-    %% Request Access Flow
-    RequestAccess --> ValidateForm{Form Valid + CAPTCHA?}
-    ValidateForm --> |"No"| RequestAccess
-    ValidateForm --> |"Yes"| SubmitRequest[Submit to Firebase]
-    SubmitRequest --> EmailAdmin[Email Notification to Admin]
-    EmailAdmin --> WaitApproval[Waiting for Approval]
-    
-    %% Admin Review Process
-    WaitApproval --> AdminNotified[Admin Reviews Request]
-    AdminNotified --> AdminAction{Admin Decision}
-    AdminAction --> |"Approve"| AssignRole[Assign Role & Class/Subject]
-    AdminAction --> |"Reject"| RejectRequest[Request Rejected]
-    AssignRole --> NotifyUser[Email User Approval]
-    
-    %% Sign In Flow
-    SignIn --> ClerkAuth[Clerk Authentication]
-    ClerkAuth --> AuthSuccess{Auth Successful?}
-    AuthSuccess --> |"No"| SignIn
-    AuthSuccess --> |"Yes"| CheckRole[Check User Role in Firebase]
-    
-    %% Role-Based Routing
-    CheckRole --> RoleDecision{User Role?}
-    RoleDecision --> |"Admin"| AdminDash[Admin Dashboard]
-    RoleDecision --> |"Student"| StudentDash[Study Dashboard]
-    RoleDecision --> |"Unapproved/None"| RequestAccess
-    RoleDecision --> |"Revoked"| RequestAccess
-    
-    %% Admin Dashboard Flow
-    AdminDash --> AdminTabs{Admin Functions}
-    AdminTabs --> |"PDF Management"| UploadPDF[Upload & Assign PDFs]
-    AdminTabs --> |"Access Requests"| ReviewRequests[Review Pending Requests]
-    AdminTabs --> |"User Management"| ManageUsers[Manage User Roles]
-    
-    UploadPDF --> GridFS[Store in MongoDB GridFS]
-    ReviewRequests --> AdminAction
-    ManageUsers --> UpdateRoles[Update User Roles & Classes]
-    
-    %% Student Dashboard Flow
-    StudentDash --> CheckApproval{Approved User?}
-    CheckApproval --> |"No"| AccessDenied[Access Denied Message]
-    CheckApproval --> |"Yes"| FetchPDFs[Fetch Class/Subject PDFs]
-    FetchPDFs --> DisplayPDFs[Display Available Documents]
-    DisplayPDFs --> ViewPDF[View PDF in Browser]
-    
-    %% Error Handling
-    AccessDenied --> RequestAccess
-    RejectRequest --> RequestAccess
-    NotifyUser --> SignIn
-    
-    %% Styling
-    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef decision fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef admin fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef student fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
-    classDef error fill:#ffebee,stroke:#c62828,stroke-width:2px
-    
-    class Start,Landing startEnd
-    class RequestAccess,SignIn,ClerkAuth,UploadPDF,FetchPDFs,ViewPDF process
-    class ValidateForm,AuthSuccess,CheckRole,RoleDecision,AdminAction,CheckApproval,AdminTabs decision
-    class AdminDash,ReviewRequests,ManageUsers,GridFS,UpdateRoles admin
-    class StudentDash,DisplayPDFs student
-    class AccessDenied,RejectRequest error
 ```
-
-#### � Detailed Authentication Flow
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant Clerk
-    participant API
-    participant Firebase
-    participant MongoDB
-    
-    User->>Frontend: Navigate to /sign-in
-    Frontend->>Clerk: Display SignIn Component
-    User->>Clerk: Enter Credentials
-    Clerk->>Clerk: Validate Credentials
-    Clerk->>API: Redirect to /api/auth-redirect
-    API->>Clerk: Get User ID & Email
-    API->>Firebase: Check User Role
-    Firebase-->>API: Return Role Data
-    API->>Frontend: Redirect Based on Role
-    Frontend->>User: Display Dashboard
-```
-
-#### 📤 Admin PDF Management Flow
-```mermaid
-sequenceDiagram
-    participant Admin
-    participant AdminUI
-    participant API
-    participant MongoDB
-    participant GridFS
-    participant Students
-    
-    Admin->>AdminUI: Upload PDF File
-    AdminUI->>API: POST /api/admin/upload-pdf
-    API->>GridFS: Store PDF Binary
-    GridFS-->>API: Return File ID
-    API->>MongoDB: Save Metadata (class, subject)
-    MongoDB-->>API: Confirm Save
-    API-->>AdminUI: Upload Success
-    AdminUI-->>Admin: Show Success Message
-    
-    Note over Students: Students can now access the PDF
-    Students->>API: GET /api/pdfs/get-student-pdfs
-    API->>MongoDB: Query by class/subject
-    MongoDB-->>API: Return PDF List
-    API-->>Students: Filtered PDF List
+├── components/                 # React components
+│   ├── admin/                 # Admin dashboard components
+│   ├── HeroSection.tsx        # Landing page sections
+│   ├── Navbar.tsx            # Navigation components
+│   └── ...
+├── pages/                     # Next.js pages and API routes
+│   ├── api/                  # Backend API endpoints
+│   │   ├── admin/           # Admin-only endpoints
+│   │   ├── auth/            # Authentication
+│   │   └── pdfs/            # Document management
+│   ├── admin.tsx            # Admin dashboard
+│   ├── study.tsx            # Student portal
+│   └── index.tsx            # Landing page
+├── utils/                     # Utility functions
+│   ├── firebase.ts          # Firebase client config
+│   ├── firebaseAdmin.ts     # Firebase admin config
+│   ├── mongodb.ts           # Database connection
+│   └── sendEmail.ts         # Email service
+├── styles/                    # CSS and styling
+├── public/                    # Static assets
+└── types/                     # TypeScript definitions
 ```
 
 ---
 
-## 🗂️ Project Structure
+## 🔧 Configuration
 
-```
-├── components/                 # Reusable UI components
-│   ├── admin/                 # Admin-specific components
-│   │   ├── AdminLayout.tsx    # Admin dashboard layout with tabs
-│   │   ├── AccessRequests.tsx # Pending request management
-│   │   ├── PdfManagement.tsx  # PDF upload & assignment
-│   │   ├── UserManagement.tsx # User role management
-│   │   └── types.ts          # TypeScript interfaces
-│   ├── Navbar.tsx            # Main navigation with responsive design
-│   ├── HeroSection.tsx       # Landing page hero content
-│   ├── AboutSection.tsx      # Institute information
-│   ├── ClassesSection.tsx    # Course offerings display
-│   ├── ContactSection.tsx    # Contact information
-│   ├── FooterSection.tsx     # Site footer
-│   └── PageLoader.tsx        # Loading animations
-├── pages/                     # Next.js routing & API endpoints
-│   ├── _app.tsx              # Global app wrapper with Clerk
-│   ├── _document.tsx         # Custom document structure
-│   ├── index.tsx             # Landing page (public)
-│   ├── admin.tsx             # Admin dashboard (protected)
-│   ├── study.tsx             # Student document library (protected)
-│   ├── request-access.tsx    # Access request form (public)
-│   ├── sign-in/[[...index]].tsx    # Clerk sign-in page
-│   ├── sign-up/[[...index]].tsx    # Clerk sign-up page
-│   └── api/                  # Backend API routes
-│       ├── auth-redirect.ts  # Post-login role-based routing
-│       ├── check-approval.ts # User approval status
-│       ├── get-user-role.ts  # User role & class lookup
-│       ├── request-access.ts # Access request submission
-│       ├── admin/           # Admin-only endpoints
-│       │   ├── get-requests.ts    # Fetch pending requests
-│       │   ├── get-users.ts       # Fetch approved users
-│       │   ├── update-request.ts  # Approve/reject requests
-│       │   ├── upload-pdf.ts      # PDF upload with metadata
-│       │   ├── get-pdfs.ts        # Fetch all PDFs
-│       │   └── delete-pdf.ts      # Remove PDFs
-│       ├── auth/            # Authentication endpoints
-│       │   └── [...nextauth].ts  # NextAuth configuration
-│       └── pdfs/            # Document management
-│           ├── [id].ts           # Individual PDF streaming
-│           └── get-student-pdfs.ts # Student document access
-├── public/                   # Static assets
-│   ├── img/                 # Images and graphics
-│   └── *.svg               # Icons and logos
-├── styles/                  # CSS modules and global styles
-│   ├── globals.css         # Global styles and CSS variables
-│   ├── admin.module.css    # Admin dashboard styling
-│   ├── study.module.css    # Student dashboard styling
-│   └── *.module.css       # Component-specific styles
-├── types/                   # TypeScript type definitions
-│   └── images.d.ts         # Image import types
-├── utils/                   # Utility functions and configurations
-│   ├── firebase.ts         # Client-side Firebase SDK
-│   ├── firebaseAdmin.ts    # Server-side Firebase Admin SDK
-│   ├── mongodb.ts          # MongoDB connection & GridFS
-│   ├── sendEmail.ts        # Email notification service
-│   ├── validation.ts       # Input validation utilities
-│   └── firebase-error-handler.ts # Error handling
-├── middleware.ts            # Route protection and CORS
-├── next.config.js          # Next.js configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-└── tsconfig.json           # TypeScript configuration
-```
+### Firebase Setup
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+2. Enable Authentication and Firestore
+3. Generate service account credentials
+4. Copy `firestore.rules` to your Firebase project
+
+### Clerk Setup
+
+1. Create account at [Clerk](https://clerk.com/)
+2. Configure authentication methods
+3. Get publishable and secret keys
+
+### MongoDB Setup
+
+1. Create cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create database user and get connection string
+3. Configure network access
 
 ---
+
+## 🔒 Security Features
+
+- **Authentication:** Multi-provider auth via Clerk + Firebase
+- **Authorization:** Role-based access control (RBAC)
+- **Data Protection:** Input validation and sanitization
+- **Rate Limiting:** API endpoint protection
+- **Secure Storage:** Encrypted document storage in GridFS
+
+---
+
+## � Deployment
+
+### Vercel Deployment
+
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy with automatic builds
+
+### Environment Variables for Production
+
+Ensure all variables from `.env.example` are configured in your hosting environment.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) for the React framework
+- [Clerk](https://clerk.com/) for authentication
+- [Firebase](https://firebase.google.com/) for backend services
+- [MongoDB](https://www.mongodb.com/) for database
+- [Tailwind CSS](https://tailwindcss.com/) for styling
 
 ## ⚙️ Environment Configuration
 
-Create a `.env.local` file with the following variables:
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
 
-```env
-# Firebase Client SDK
-NEXT_PUBLIC_FIREBASE_API_KEY=...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-NEXT_PUBLIC_FIREBASE_APP_ID=...
+2. Update `.env.local` with your actual credentials:
+   - Get Firebase credentials from [Firebase Console](https://console.firebase.google.com/)
+   - Get Clerk keys from [Clerk Dashboard](https://dashboard.clerk.com/)
+   - Set up MongoDB Atlas and get connection string
+   - Configure Resend for email services
+   - Set up hCaptcha for form protection
 
-# Firebase Admin SDK
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANB...
------END PRIVATE KEY-----"
+> ⚠️ Never commit `.env.local` to version control. It contains sensitive credentials.
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
-CLERK_SECRET_KEY=...
-
-# MongoDB
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/aims
-MONGODB_DB_NAME=aimsDB
-
-# Email & CAPTCHA
-RESEND_API_KEY=...
-RESEND_FROM_EMAIL=...
-ADMIN_EMAIL=...
-NEXT_PUBLIC_HCAPTCHA_SITE_KEY=...
-HCAPTCHA_SECRET_KEY=...
-
-# Site URL
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
-
-> ⚠️ Ensure `FIREBASE_PRIVATE_KEY` uses actual line breaks in Vercel or local `.env`.
+> 📝 For Vercel deployment, add environment variables in the Vercel dashboard and ensure `FIREBASE_PRIVATE_KEY` is set as "plain text with newlines".
 
 ---
 

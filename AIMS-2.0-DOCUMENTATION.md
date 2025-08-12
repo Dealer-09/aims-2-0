@@ -103,37 +103,42 @@ C --> D[Display PDF List]
 
 ## ⚙️ Environment Configuration
 
-Create a `.env.local` file with the following variables:
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Fill in your actual values:
 
 ```env
 # Firebase Client SDK
-NEXT_PUBLIC_FIREBASE_API_KEY=...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-NEXT_PUBLIC_FIREBASE_APP_ID=...
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789012
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789012:web:abcdef1234567890
 
 # Firebase Admin SDK
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@project.iam.gserviceaccount.com
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANB...
+Your_Private_Key_Content_Here
 -----END PRIVATE KEY-----"
 
 # Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
-CLERK_SECRET_KEY=...
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
+CLERK_SECRET_KEY=sk_test_your_clerk_secret_key_here
 
 # MongoDB
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/aims
-MONGODB_DB_NAME=aimsDB
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database
+MONGODB_DB_NAME=your_database_name
 
 # Email & CAPTCHA
-RESEND_API_KEY=...
-RESEND_FROM_EMAIL=...
-ADMIN_EMAIL=...
-NEXT_PUBLIC_HCAPTCHA_SITE_KEY=...
-HCAPTCHA_SECRET_KEY=...
+RESEND_API_KEY=re_your_resend_api_key_here
+RESEND_FROM_EMAIL=no-reply@yourdomain.com
+ADMIN_EMAIL=admin@yourdomain.com
+NEXT_PUBLIC_HCAPTCHA_SITE_KEY=your_hcaptcha_site_key_here
+HCAPTCHA_SECRET_KEY=your_hcaptcha_secret_key_here
 
 # Site URL
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -208,23 +213,14 @@ Health check API endpoints:
 ##### For Vercel Deployment:
 
 1. Go to your Vercel project dashboard > Settings > Environment Variables
-2. Add the following:
-   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`: Copy from JSON
-   - `FIREBASE_CLIENT_EMAIL`: Copy from JSON
-   - `FIREBASE_PRIVATE_KEY`: Copy from JSON as "plain text with newlines" (crucial)
+2. Add all variables from `.env.example` with your actual values
+3. For `FIREBASE_PRIVATE_KEY`: Set as "plain text with newlines" (crucial)
 
 ##### For Local Development:
 
-Create a `.env.local` file with:
-```
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDDz...
------END PRIVATE KEY-----"
-```
-
-> **Critical:** For `FIREBASE_PRIVATE_KEY`, include actual newlines, not escaped `\n` characters.
+1. Copy `.env.example` to `.env.local`
+2. Fill in all variables with your actual credentials
+3. For `FIREBASE_PRIVATE_KEY`: Include actual newlines, not escaped `\n` characters
 
 ### Troubleshooting
 

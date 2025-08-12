@@ -1,4 +1,3 @@
-// Shared types for admin components
 export type Request = {
   id: string;
   email: string;

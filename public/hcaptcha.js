@@ -1,7 +1,5 @@
-// hCaptcha callback will set this variable
 window.__hcaptchaToken = undefined;
 
-// Define the hCaptcha callbacks
 function onHCaptchaSuccess(token) {
   console.log("hCaptcha success callback triggered");
   window.__hcaptchaToken = token;
@@ -17,7 +15,6 @@ function onHCaptchaError(error) {
   window.__hcaptchaToken = undefined;
 }
 
-// Make callbacks globally available
 window.onHCaptchaSuccess = onHCaptchaSuccess;
 window.onHCaptchaExpired = onHCaptchaExpired;
 window.onHCaptchaError = onHCaptchaError;

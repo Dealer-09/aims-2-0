@@ -5,23 +5,22 @@ const HeroSection: React.FC = () => {
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Add animation classes after component mounts
     const img = imgRef.current;
     const text = textRef.current;
     
     if (img) img.classList.add('animate-fadeIn');
     
-    // Staggered text animation
     if (text) {
       text.classList.add('animate-fadeInRight');
       
-      // Add animation to children elements with delay
       const children = text.children;
       for (let i = 0; i < children.length; i++) {
         (children[i] as HTMLElement).style.animationDelay = `${i * 0.15}s`;
       }
     }
-  }, []);  return (
+  }, []);
+
+  return (
     <section className="hero-section" id="home">
       <div className="hero-content">
         <div className="hero-badge" ref={imgRef}>

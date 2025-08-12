@@ -1,6 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 
-// PDF document metadata schema
 const PdfSchema = new Schema({
   filename: {
     type: String, 
@@ -36,5 +35,4 @@ const PdfSchema = new Schema({
   }
 });
 
-// Check if the model has been compiled already
 export default mongoose.models.Pdf || mongoose.model('Pdf', PdfSchema);

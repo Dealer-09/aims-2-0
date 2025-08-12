@@ -21,11 +21,11 @@ const ReviewsSection: React.FC = () => {
         <SwiperSlide>
           <div className="review-box">
             <i className="bx bxs-quote-right"></i>
-            <p className="review-text">Your lessons have left an indelible mark on my life.</p>
+            <p className="review-text">Really grateful to have a teacher like this!!</p>
             <div className="review-profile">
-              <h2>Vikash</h2>
+              <h2>Divya</h2>
               <span>From Hindmotor</span>
-              <Image src="/img/vikash.jpg" alt="Vikash" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/divya.jpeg" alt="Divya" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>
@@ -34,11 +34,11 @@ const ReviewsSection: React.FC = () => {
         <SwiperSlide>
           <div className="review-box">
             <i className="bx bxs-quote-right"></i>
-            <p className="review-text">Really grateful to have a teacher like this!!</p>
+            <p className="review-text">Your lessons have left an indelible mark on my life.</p>
             <div className="review-profile">
-              <h2>Divya</h2>
+              <h2>Vikash</h2>
               <span>From Hindmotor</span>
-              <Image src="/img/divya.jpeg" alt="Divya" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
+              <Image src="/img/vikash.jpg" alt="Vikash" width={40} height={40} onContextMenu={(e) => e.preventDefault()} />
             </div>
           </div>
         </SwiperSlide>

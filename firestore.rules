@@ -28,7 +28,9 @@ service cloud.firestore {
         request.auth != null &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }    // Control access to users collection
+    }
+    
+    // Control access to users collection
     match /users/{userId} {
       // Public function to check if a user is approved
       function isUserApproved(email) {
@@ -54,7 +56,8 @@ service cloud.firestore {
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['displayName', 'photoURL', 'lastLogin']);
     }
-      // PDF collection access rules
+    
+    // PDF collection access rules
     match /pdfs/{docId} {
       // Allow authenticated users to read PDFs
       allow read: if request.auth != null;
@@ -65,13 +68,13 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
         
-      // Validate PDF data structure
+      // Validate PDF data structure - customize these values for your needs
       allow create, update: if 
         request.resource.data.keys().hasAll(['url', 'filename', 'class', 'subject', 'uploadedBy', 'uploadedAt']) &&
         request.resource.data.url is string &&
         request.resource.data.filename is string &&
         request.resource.data.class in ['Class 10', 'Class 12'] &&
-        request.resource.data.subject in ['Math', 'Physics'];
+        request.resource.data.subject in ['Math', 'Physics', 'Chemistry', 'Biology'];
     }
     
     // Default deny

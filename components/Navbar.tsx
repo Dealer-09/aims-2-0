@@ -5,18 +5,15 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scrolling effect
   const handleScroll = useCallback(() => {
     setScrolled(window.scrollY > 50);
   }, []);
 
-  // Close mobile menu when clicking outside or pressing escape
   const closeMobileMenu = useCallback(() => {
     setMobileMenuOpen(false);
     document.body.classList.remove('mobile-menu-open');
   }, []);
 
-  // Handle escape key
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && mobileMenuOpen) {
       closeMobileMenu();
@@ -34,7 +31,6 @@ const Navbar: React.FC = () => {
     };
   }, [handleScroll, handleKeyDown]);
 
-  // Toggle mobile menu
   const toggleMobileMenu = () => {
     const newState = !mobileMenuOpen;
     setMobileMenuOpen(newState);
@@ -46,10 +42,11 @@ const Navbar: React.FC = () => {
     }
   };
 
-  // Handle navigation link click
   const handleNavClick = () => {
     closeMobileMenu();
-  };  return (
+  };
+
+  return (
     <>
       <header className={scrolled ? "header-active" : ""} role="banner">
         <div className="nav container">

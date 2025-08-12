@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-// Add hCaptcha type declaration
 declare global {
   interface Window {
     hcaptcha?: {
@@ -25,14 +24,12 @@ const RequestAccess: React.FC = () => {
     setStatus(null);
     setCaptchaError("");
     
-    // Get hCaptcha token
     const captchaToken = window.__hcaptchaToken;
     if (!captchaToken) {
       setCaptchaError("Please complete the CAPTCHA verification.");
       return;
     }
     
-    // Log captcha token length for debugging
     console.log(`Submitting form with captcha token length: ${captchaToken.length}`);
     
     setIsSubmitting(true);
@@ -51,7 +48,6 @@ const RequestAccess: React.FC = () => {
         })
       });
 
-      // Enhanced error handling
       if (!res.ok) {
         const errorText = await res.text();
         console.error("Request failed with status:", res.status);
@@ -63,14 +59,13 @@ const RequestAccess: React.FC = () => {
             type: "error", 
             text: errorJson.error || "Request failed. Please try again." 
           });
-        } catch (parseError) {
+        } catch {
           setStatus({ 
             type: "error", 
             text: `Request failed (${res.status}). Please try again.` 
           });
         }
         
-        // Reset captcha
         window.__hcaptchaToken = undefined;
         if (window.hcaptcha?.reset) {
           window.hcaptcha.reset();
@@ -89,9 +84,7 @@ const RequestAccess: React.FC = () => {
             text: data.message || "Request sent successfully! Please wait for admin approval." 
           });
         }, 1500);
-          // Reset form
         setEmail("");
-        // Reset captcha
         window.__hcaptchaToken = undefined;
         if (window.hcaptcha?.reset) {
           window.hcaptcha.reset();
@@ -100,7 +93,6 @@ const RequestAccess: React.FC = () => {
           type: "error", 
           text: data.error || "Request failed. Please try again." 
         });
-        // Reset captcha on error too
         window.__hcaptchaToken = undefined;
         if (window.hcaptcha?.reset) {
           window.hcaptcha.reset();
@@ -118,44 +110,23 @@ const RequestAccess: React.FC = () => {
   
   useEffect(() => {
     if (typeof window !== "undefined" && !document.getElementById("hcaptcha-script")) {
-      // First, load the callback handler to ensure it's available when hCaptcha loads
       const localScript = document.createElement("script");
       localScript.src = "/hcaptcha.js";
       localScript.id = "hcaptcha-callback";
       document.head.appendChild(localScript);
       
-      // Wait briefly to ensure the callbacks are registered before loading hCaptcha
       setTimeout(() => {
-        // Then load hCaptcha script
         const script = document.createElement("script");
         script.src = "https://js.hcaptcha.com/1/api.js";
         script.async = true;
         script.defer = true;
         script.id = "hcaptcha-script";
         document.head.appendChild(script);
-      }, 100);      // Add a debug button to test API connectivity
-      const debugButton = document.createElement("button");
-      debugButton.id = "debug-api-button";
-      debugButton.innerText = "Test API Connection";
-      debugButton.style.display = "none"; // Hide in production
-      debugButton.onclick = async () => {
-        try {
-          const res = await fetch("/api/check-approval?email=test@example.com");
-          const data = await res.json();
-          console.log("API test response:", data);
-          alert("API Connection Test: " + (res.ok ? "Success" : "Failed"));
-        } catch (err: any) {
-          console.error("API test error:", err);
-          alert("API Connection Error: " + (err.message || "Unknown error"));
-        }
-      };
-      document.body.appendChild(debugButton);
+      }, 100);
 
       return () => {
-        // Cleanup scripts on unmount
         document.getElementById("hcaptcha-script")?.remove();
         document.getElementById("hcaptcha-callback")?.remove();
-        document.getElementById("debug-api-button")?.remove();
       };
     }
   }, []);

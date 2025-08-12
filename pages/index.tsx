@@ -54,10 +54,9 @@ const Home: React.FC = () => {
         <meta name="keywords" content="AIMS, mathematics education, science institute, competitive exams, tutoring, Amit Institute, CBSE, ICSE, board exams, physics, chemistry, biology, math coaching" />
         <meta name="author" content="Amit Institute of Math's and Science" />
         <meta property="og:title" content="AIMS - Excellence in Mathematics & Science Education" />
-        <meta property="og:description" content="Join AIMS for comprehensive mathematics and science education with expert faculty and proven results." />
-        <meta property="og:type" content="website" />
+        <meta property="og:description" content="Join AIMS for comprehensive mathematics and science education with expert faculty and proven results." />        <meta property="og:type" content="website" />
         <link rel="canonical" href="https://aims-education.com" />
-        <link rel="shortcut icon" href={acad.src} type="image/x-icon" />      </Head>
+        <link rel="shortcut icon" href={acad.src} type="image/x-icon" /></Head>
       <AnnouncementBanner />
       <Navbar />      <main id="main-content">
         <HeroSection />

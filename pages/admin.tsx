@@ -2,14 +2,12 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-// Import admin components
 import AdminLayout from "../components/admin/AdminLayout";
 import PdfManagement from "../components/admin/PdfManagement";
 import AccessRequests from "../components/admin/AccessRequests";
 import UserManagement from "../components/admin/UserManagement";
 import { Request, User, PDF } from "../components/admin/types";
 
-// Import styles
 import styles from "../styles/admin.module.css";
 
 export default function AdminDashboard() {
@@ -21,7 +19,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [pdfs, setPdfs] = useState<PDF[]>([]);
 
-  // Admin role verification
   useEffect(() => {
     const verifyAdmin = async () => {
       if (!isSignedIn || !user) {
@@ -35,10 +32,8 @@ export default function AdminDashboard() {
           throw new Error("Email not available");
         }
         
-        // Normalize email to match Firebase storage format
         const normalizedEmail = email.toLowerCase().trim();
         
-        // Clerk will automatically add the auth cookie to the request
         const res = await fetch(`/api/get-user-role?email=${encodeURIComponent(normalizedEmail)}`);
         
         if (!res.ok) {
@@ -47,11 +42,7 @@ export default function AdminDashboard() {
         
         const data = await res.json();
         
-        // Log detailed role information for debugging
-        console.log(`User role check for ${normalizedEmail}:`, data);
-
         if (data.role?.toLowerCase() !== "admin") {
-          console.warn(`Access denied: User is not an admin. Role: ${data.role}`);
           alert("You don't have admin privileges to access this page.");
           router.push("/study");
           return;
@@ -69,15 +60,11 @@ export default function AdminDashboard() {
     verifyAdmin();
   }, [isSignedIn, user, router]);
 
-  // Fetch pending requests
   useEffect(() => {
     const fetchRequests = async () => {
       if (!isAdmin) return;
 
       try {
-        console.log("Fetching pending access requests...");
-        
-        // Use server API endpoint instead of direct Firestore access
         const response = await fetch('/api/admin/get-requests');
         
         if (!response.ok) {
@@ -85,8 +72,6 @@ export default function AdminDashboard() {
         }
         
         const data = await response.json();
-        console.log(`Found ${data.requests.length} pending requests`);
-        
         setRequests(data.requests);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -97,15 +82,11 @@ export default function AdminDashboard() {
     fetchRequests();
   }, [isAdmin]);
 
-  // Fetch approved users
   useEffect(() => {
     const fetchUsers = async () => {
       if (!isAdmin) return;
 
       try {
-        console.log("Fetching users...");
-        
-        // Use server API endpoint instead of direct Firestore access
         const response = await fetch('/api/admin/get-users');
         
         if (!response.ok) {
@@ -113,8 +94,6 @@ export default function AdminDashboard() {
         }
         
         const data = await response.json();
-        console.log(`Found ${data.users.length} users`);
-        
         setUsers(data.users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -124,32 +103,26 @@ export default function AdminDashboard() {
 
     fetchUsers();
   }, [isAdmin]);
-  // Fetch PDFs
+  
   useEffect(() => {
     const fetchPDFs = async () => {
       if (!isAdmin) return;
       
       try {
-        console.log("Fetching PDFs...");
-        
-        // Use server API endpoint instead of direct Firestore access
         const response = await fetch('/api/admin/get-pdfs');
         
         if (!response.ok) {
-          // Attempt to get more detailed error info
           let errorMessage;
           try {
             const errorData = await response.json();
             errorMessage = errorData.error || errorData.details || `${response.status} ${response.statusText}`;
-          } catch (jsonError) {
+          } catch {
             errorMessage = `${response.status} ${response.statusText}`;
           }
           throw new Error(`Failed to fetch PDFs: ${errorMessage}`);
         }
         
         const data = await response.json();
-        console.log(`Found ${data.pdfs.length} PDFs`);
-        
         setPdfs(data.pdfs);
       } catch (error) {
         console.error("Error fetching PDFs:", error);
@@ -160,14 +133,12 @@ export default function AdminDashboard() {
     fetchPDFs();
   }, [isAdmin]);
 
-  // Handle PDF deletion
   const handleDeletePdf = async (pdfId: string) => {
     if (!confirm("Are you sure you want to delete this PDF?")) {
       return;
     }
 
     try {
-      // Use the server API to delete the PDF
       const response = await fetch('/api/admin/delete-pdf', {
         method: 'POST',
         headers: {
@@ -183,7 +154,6 @@ export default function AdminDashboard() {
         throw new Error(errorData.error || `Failed to delete PDF: ${response.status} ${response.statusText}`);
       }
       
-      // Update local state
       setPdfs(pdfs.filter((p) => p.id !== pdfId));
       alert("PDF deleted successfully.");
     } catch (error) {
@@ -192,17 +162,13 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle user updates
   const handleUserUpdate = async (userId: string, updates: Partial<User>) => {
     try {
-      console.log(`Updating user ${userId} with:`, updates);
-      
       const userData = users.find(u => u.id === userId);
       if (!userData) {
         throw new Error("User not found");
       }
       
-      // Use the server API to update user information
       const response = await fetch('/api/admin/update-request', {
         method: 'POST',
         headers: {
@@ -221,7 +187,6 @@ export default function AdminDashboard() {
         throw new Error(errorData.error || `Failed to update user: ${response.status} ${response.statusText}`);
       }
       
-      // Update local state
       setUsers(users.map((u) => (u.id === userId ? { ...u, ...updates } : u)));
       alert("User updated successfully!");
     } catch (error) {
@@ -230,7 +195,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle user access revocation
   const handleUserRevoke = async (userId: string, email: string) => {
     if (!confirm("Are you sure you want to revoke this user's access?")) {
       return;
@@ -239,7 +203,6 @@ export default function AdminDashboard() {
     try {
       console.log(`Revoking access for user ${userId} (${email})`);
       
-      // Use the server API to update user role
       const response = await fetch('/api/admin/update-request', {
         method: 'POST',
         headers: {
@@ -257,7 +220,6 @@ export default function AdminDashboard() {
         throw new Error(errorData.error || `Failed to revoke access: ${response.status} ${response.statusText}`);
       }
       
-      // Update local state
       setUsers(users.map((u) => 
         u.id === userId ? { ...u, role: "revoked" } : u
       ));
@@ -267,18 +229,17 @@ export default function AdminDashboard() {
       console.error("Error revoking access:", error);
       alert(`Failed to revoke access: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
-  };  // Handle PDF upload
+  };
+  
   const handlePdfUpload = async (file: File, pdfClass: string, pdfSubject: string) => {
     try {
       console.log(`Uploading PDF: ${file.name}, Class: ${pdfClass}, Subject: ${pdfSubject}`);
       
-      // Create a FormData object for the file upload
       const formData = new FormData();
       formData.append('file', file);
       formData.append('class', pdfClass);
       formData.append('subject', pdfSubject);
       
-      // Upload to MongoDB through API
       const uploadResponse = await fetch('/api/admin/upload-pdf', {
         method: 'POST',
         body: formData,
@@ -292,16 +253,14 @@ export default function AdminDashboard() {
           if (errorData.details) {
             errorMessage += ` - ${errorData.details}`;
           }
-        } catch (jsonError) {
-          // If JSON parsing fails, use the default error message
-          console.error("Failed to parse error JSON:", jsonError);
+        } catch {
+          console.error("Failed to parse error JSON");
         }
         throw new Error(errorMessage);
       }
       
       console.log("PDF uploaded successfully, refreshing PDF list");
       
-      // Refresh the PDFs list
       try {
         const response = await fetch('/api/admin/get-pdfs');
         if (response.ok) {
@@ -312,22 +271,18 @@ export default function AdminDashboard() {
         }
       } catch (refreshError) {
         console.warn("Error refreshing PDFs after upload:", refreshError);
-        // Continue anyway since the upload was successful
       }
       
-      // No return value needed (void)
     } catch (error) {
       console.error("PDF upload error:", error);
-      throw error; // Let the PdfManagement component handle the error
+      throw error;
     }
   };
 
-  // Handle approval/rejection of access requests
   const handleApproveRequest = async (id: string, email: string, selectedClass: string, selectedSubject: string) => {
     try {
       console.log(`Approving request: ${id}, email: ${email}`);
       
-      // Use the server API 
       const response = await fetch('/api/admin/update-request', {
         method: 'POST',
         headers: {
@@ -347,10 +302,8 @@ export default function AdminDashboard() {
         throw new Error(errorData.error || `Failed to approve request`);
       }
       
-      // Update local state
       setRequests(requests.filter((req) => req.id !== id));
       
-      // Add to users list
       setUsers([
         ...users,
         {
@@ -373,7 +326,6 @@ export default function AdminDashboard() {
     try {
       console.log(`Rejecting request: ${id}, email: ${email}`);
       
-      // Use the server API
       const response = await fetch('/api/admin/update-request', {
         method: 'POST',
         headers: {
@@ -391,7 +343,6 @@ export default function AdminDashboard() {
         throw new Error(errorData.error || `Failed to reject request`);
       }
       
-      // Update local state
       setRequests(requests.filter((req) => req.id !== id));
       alert(`Request from ${email} has been rejected.`);
     } catch (error) {
